@@ -1,0 +1,139 @@
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+  
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    </head>
+    <body>
+    {% include 'messages.html' %}
+    {% load crispy_forms_tags %}  
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/homepage">Digi-Card</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="False" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarText">
+        <ul class="navbar-nav">
+            {% if request.user.is_authenticated %}
+            
+            <li class="nav-item">
+              <a class="nav-link" href="#">Welcome, {{user.username}}</a>
+              </li>
+              <li class="nav-item">
+              <a class="nav-link" href="/card">Card</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+              </li>
+            
+    
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+              </li>
+        </ul>
+        </div>
+        
+    </nav>
+    {% endif %}
+    
+
+    
+  
+      <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    </body>
+</html> -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300&family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <title>QuickShare | Cards</title>
+</head>
+<body>
+<div class="parent">
+    <div class="menu">
+        <div style="margin: 5px 0px 30px 5px; width: 200px;" >
+          <a href="/" style="text-decoration: none; color: #fff;"><img src="{% static 'images/Group 37.svg' %}" alt="logo" > <label style="color: #fff; font-size: 18px; font-family: 'poppins'; position: relative; top: -7px">Quick Share</label></a>
+        </div>
+       <ul>
+        <li> <img src="{% static 'images/Vector (2).svg' %}" alt=""><label><a href="/" style="text-decoration: none; color: #fff;">Cards</a></label> </li>
+        <li> <img src="{% static 'images/Group (1).svg' %}" alt="" ><label>Contact</label> </li>
+        <li> <img src="{% static 'images/Vector (3).svg' %}" alt="" ><label>Background</label> </li>
+        <li> <img src="{% static 'images/Vector (4).svg' %}" alt="" ><label>Email Signature</label> </li>
+        <li> <img src="{% static 'images/Vector (5).svg' %}" alt="" ><label> <a href="/setting" style="text-decoration: none; color: #fff;">Settings</a></label> </li>
+        </ul>    
+        <div class="icons-bottom" >
+          <img src="{% static 'images/Group 47.svg' %}" alt="" class="logout-image"><label class="logout-text"><a href="/logout" style="text-decoration: none; color: #fff;">Log Out</a></label>
+        </div>
+    </div> 
+    <div class="nav">
+      <a href="javascript:history.back()">
+      <img src="{% static 'images/Vector (7).svg' %}" alt="" class="arrow"></a>
+      <span>Setting</span> 
+      {% include 'messages.html' %}
+    </div>
+    <div class="nav-side">
+      <div class="nav-side-div">
+        <label for="" style="font-size: 20px;">{{user.username}}</label> <br>
+      </div>
+    </div>
+    <div class="main-setting">
+      <h2>Account Settings</h2>
+      <div class="inner-setting">
+       <a href="/password_reset" style="text-decoration: none; color: black;"> <p><img src="{% static 'images/edit.svg' %}" alt="edit">  Change your password <img src="{% static 'images/redirect.svg' %}" alt="redirect" style="    position: absolute;
+          top: 105px;
+          right: 27px;"></p></a>
+       <p onclick="showDeleteModal()"><img src="{% static 'images/delete.svg' %}" alt="delete" >  Delete your account <img src="{% static 'images/redirect.svg' %}" alt="redirect" style="    position: absolute;
+          top: 147px; 
+          right: 27px;"></p>
+      </div>
+    </div>
+    
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+<script>
+  $(document).ready(function(){
+  setTimeout(function() {
+    $('.alert').fadeOut('slow');
+  }, 5000); 
+});
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+  function showDeleteModal() {
+    let modal = document.getElementById("delete-modal")
+    modal.style.top = "0"
+  }
+  function hideDeleteModal() {
+    let modal = document.getElementById("delete-modal")
+    modal.style.top = "-100%";
+  }
+  
+</script>
+<div id="delete-modal">
+  <div class="delete">
+      <p style="    font-size: 23px;
+      margin-bottom: 0;">Are you sure you want </p>
+      <p style="    font-size: 23px;
+      margin-top: 0;">to delete your account?</p>
+      <div>
+         <a href="{% url 'main:delete_account' %}"> <input type="submit" value="Yes,Delete" class="btn-save" style="padding: 7px 7px;"></a>
+          <input type="reset" onclick="hideDeleteModal()" value="Cancel " class="btn-clear" style="padding: 7px 7px;">
+      </div>
+  </div>
+</div>
+</body>
+</html>

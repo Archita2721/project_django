@@ -1,0 +1,162 @@
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    </head>
+    <body>
+    {% include 'messages.html' %}
+    {% load crispy_forms_tags %}  
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/homepage">Digi-Card</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="False" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarText">
+        <ul class="navbar-nav">
+            {% if request.user.is_authenticated %}
+            
+                <li class="nav-item">
+                <a class="nav-link" href="#">Welcome, {{user.username}}</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/card">Card</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/logout">Logout</a>
+                </li>
+    
+    
+            {% else %}
+    
+                <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+                </li>
+    
+            {% endif %}
+        </ul>
+        </div>
+        
+    </nav>
+    <div class="container py-5">
+        <h1>Register</h1>
+        <form method="POST">
+            {% csrf_token %}
+            {{ register_form|crispy }}                    
+            <button class="btn btn-primary" type="submit">Register</button>
+        </form>
+        <p class="text-center">If you already have an account, <a href="/login">login</a> instead.</p>
+    </div>
+
+  
+      <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    </body>
+</html> -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300&family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <title>Quickshare | Register</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="parent">
+        {% include 'messages.html' %}
+        <div class="rectangle">
+            <div class="ellipse1">
+                <img src="{% static 'images/Ellipse1.svg' %}" >
+            </div>
+           
+            <div class="ellipse2">
+                <img src="{% static 'images/Ellipse2.svg' %}" >
+            </div> 
+            <div class="loginContainer">
+                <div class="text-container-reg">
+                    <h2 >Already Have An Account?</h2>
+                    <p >If you already have an account,then login.</p>
+                    <a href="/login"><input type="submit" value="Login your Account" ></a>
+                </div>
+                <div class="register">
+                    <p>Register Your Account
+                    </p>
+                    <img src="{% static 'images/Rectangle 12 .svg' %}" class="line">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="input-container">
+                       
+                        <div>
+                            <input type="text"  id="username" placeholder="Username" name="username" style="margin-top: 20px;">
+                            <img src="{% static 'images/Vector (9).svg' %}" style="    position: absolute;
+                            right: 38px;
+                            top: 165px;
+                            z-index: 1;">
+                        </div>
+                        <div>
+                            <input type="email" name="email" id="email" placeholder="Email Address">
+                            <img src="{% static 'images/Group 29.svg' %}" style="    position: absolute;
+                            right: 38px;
+                            top: 225px;
+                            z-index: 1;">
+                        </div>
+                        <div>
+                            <input type="password" id="password1" name="password1" placeholder="Password">
+                            <img id="password-img" src="{% static 'images/password_close.svg' %}"  onclick="passwordToggle(this.id, 'password1')" style="   position: absolute;
+                            right: 38px;
+                            top: 289px;
+                            z-index: 1;">
+                        </div>
+                        <div>
+                            <input type="password" id="password2" name="password2" placeholder="Confirm Password" >
+                            <img id="password-img1" src="{% static 'images/password_close.svg' %}"  onclick="passwordToggle(this.id, 'password2')" style="   position: absolute;
+                            right: 38px;
+                            top: 350px;
+                            z-index: 1;">
+                        </div>
+                        </div>                    
+                    
+                        
+                        <button class="btn-submit" type="submit">Register</button>
+                </form>
+              </div>
+              
+            </div>
+            <div class="photo-reg">
+                <img src="{% static 'images/Group 24.svg' %}" >
+            </div>
+        </div>
+    </div>
+    <script>
+        function passwordToggle(imgId, passwordId) {
+            let img = document.getElementById(imgId)
+            let password = document.getElementById(passwordId)
+    
+            if (password.type=="password") {
+                img.src = "{% static 'images/Vector (1).svg' %}";
+                password.type = "text"
+            } else {
+                img.src = "{% static 'images/password_close.svg' %}";
+                password.type = "password"
+            }
+        }
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+        setTimeout(function() {
+          $('.alert').fadeOut('slow');
+        }, 5000); 
+      });
+      </script>
+</body>
+</html>
