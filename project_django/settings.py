@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-io0^v+_7ap0vgtx#j2y4vs2futs*^gol6icma*_74s-h+&mg6='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['13.53.187.188']
 
 
 # Application definition
@@ -162,3 +162,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MIXPANEL_TOKEN = "36cbd6f0b92d0588b757298c93c7a733"
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/'
+
+STATIC_ROOT = '/var/www/mysite/assets/'
