@@ -165,4 +165,3 @@ LOGIN_REDIRECT_URL = '/'
 
 STATIC_ROOT = '/var/www/mysite/assets/'
 
-STATIC_ROOT = '/var/www/mysite/assets/'
