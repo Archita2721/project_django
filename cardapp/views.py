@@ -40,6 +40,8 @@ from django.core.exceptions import PermissionDenied
 from smtplib import SMTPDataError
 from django.views.generic import FormView
 from django.http import Http404, HttpResponse
+import os
+from django.conf import settings
 from mixpanel import Mixpanel
 mp = Mixpanel("36cbd6f0b92d0588b757298c93c7a733")
 
@@ -509,17 +511,24 @@ def update(request,id):
         return render(request, 'addcard.html', context)
 
 def delete(request,id):
-    # mydata = CardData.objects.get(id=id)
-    # if request.method == "POST":
-    #     mydata.delete()
-    #     messages.success(request, 'Deleted Successfully!')
-    #     return redirect("main:homepage")
-    # else:
-    #     messages.error(request, 'Something went wrong')
-    # return render(request,"card.html")
+   
     mydata = CardData.objects.get(id=id)
+    
+    # Delete the image file
+    if mydata.upload:
+        path = os.path.join(settings.MEDIA_ROOT, str(mydata.upload))
+        if os.path.isfile(path):
+            os.remove(path)
+
+    # Delete the QR code file
+    if mydata.qr_code:
+        path1 = os.path.join(settings.MEDIA_ROOT, str(mydata.qr_code))
+        if os.path.isfile(path1):
+            os.remove(path1)
+            
     mydata.delete()
-    #return HttpResponseRedirect(reverse('main:form'))
+
+    
     return redirect('main:form')
 
 # def delete(request, id):
@@ -539,6 +548,9 @@ def delete_account(request):
         print(user)
         username = user.username
         print(username)
+        if CardData.objects.filter(email=request.user.email).exists():
+            CardData.objects.filter(email=request.user.email).delete()
+
         user.delete()
         messages.success(request, f"Your account ({username}) has been deleted.")
         logout(request)

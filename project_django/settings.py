@@ -27,7 +27,8 @@ SECRET_KEY = 'django-insecure-io0^v+_7ap0vgtx#j2y4vs2futs*^gol6icma*_74s-h+&mg6=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.53.129.81']
+ALLOWED_HOSTS = ['*']
+#ALLOWED_HOSTS = ['13.53.45.132']
 
 
 # Application definition
@@ -163,5 +164,5 @@ MIXPANEL_TOKEN = "36cbd6f0b92d0588b757298c93c7a733"
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/'
 
-STATIC_ROOT = '/var/www/mysite/assets/'
+STATIC_ROOT = '/var/www/project_django/assets/'
 
