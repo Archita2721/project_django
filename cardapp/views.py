@@ -191,7 +191,7 @@ def register_request(request):
             })
             user.email_user(subject, message)
 
-            messages.success(request, ('Please Confirm your email to complete registration.'))
+            #messages.success(request, ('Please Confirm your email to complete registration.'))
 
             return redirect('login')
 
