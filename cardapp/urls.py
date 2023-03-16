@@ -28,6 +28,7 @@ urlpatterns = [
     #path("send",views.send,name="send")
     path("send/<int:id>",views.send,name="send"),
     path("sendmail/<int:id>",views.sendmail,name="sendmail"),
+    path("sendmailqr/<int:id>",views.sendmailqr,name="sendmailqr"),
     path("setting",views.setting,name="setting"),
     path("delete",views.delete_account,name='delete_account'),
    

@@ -1,55 +1,49 @@
+
+{% load static %}
 <!DOCTYPE html>
-<html>
-  <head>
-      <!-- Required meta tags -->
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <!--Bootstrap CSS-->
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    </head>
-    <body>
-      {% include 'messages.html' %}
-      {% load crispy_forms_tags %}  
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300&family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <title>Quickshare | Card Details</title>
+</head>
+<body>
+  <div class="parent">
     
-      
-      {% if mydata %}
+   
     
-      <div class="container mt-5">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm">
-              <div class="card mt-2 border" style="width:300px;">
+    
+    <div style="padding: 89px 551px;">
+        <div class="card">
+            
+              <div class="card-photo">
                 {% if mydata.upload %}
-                <img class="card-img-top" src={{mydata.upload.url}} style="width:100% ; height:50%">
-                <!--  -->
+                <img src={{mydata.upload.url}} alt="">
                 {% endif %}
-                  <div class="card-body">
-                    <h4 class="card-title">{{mydata.firstname}} {{mydata.middlename}} {{mydata.lastname}}</h4>
-                    <p class="card-text">{{mydata.title}},{{mydata.department}},{{mydata.company}}</p>
-                    <p class="card-text">Ph:{{mydata.phone}}</p>
-                    <a href="{% url 'main:qr_card' mydata.id %}" class="btn btn-primary">Save card</a>
-                    <a href="{% url 'main:send' mydata.id %}" class="btn btn-secondary">Send Card</a>
-                   
-                  </div>
-              </div>
+              </div> 
+            
+            <div class="elements">
+                <h2 style="margin-bottom: 0;">{{mydata.fullname}} </h2>
+                <p style="margin-top: 5px;">{{mydata.department}} at {{mydata.company}}</p>
+                <p style="margin-top: 0;"><span><img src="{% static 'images/Vector (12).svg' %}" alt=""></span> {{mydata.phone}}</p>
+                <p style="margin-top: 0;"> <span><img src="{% static 'images/Vector (13).svg' %}" alt=""></span> {{mydata.email}}</p>
+                <div>
+                  <a href="{% url 'main:qr_card' mydata.id %}" > <button style="margin-right: 7%;"><img src="{% static 'images/Vector (17).svg' %}" alt=""> <span>Save</span></button></a>
+                  <a href="{% url 'main:sendmailqr' mydata.id %}" ><button ><img src="{% static 'images/Vector (18).svg' %}" alt="" > <span>Send</span></button></a>
+                </div>
             </div>
-            <!-- <div class="col-sm">
-              <h2>Scan Using QR</h2>
-              <img class="card-img-top" src= alt="Card image" style="width:50%;height:50%;">
-            </div> -->
-          </div>
         </div>
-      </div>
-     
-      {% else %}
-      <div class="container mt-5">
-        <h1>No Card Available</h1>
-      </div>
-      {% endif%}
-     
-    <!-- Optional Javascript -->
-      <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    </body>
+        
+        
+   
+    
+    
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
 </html>

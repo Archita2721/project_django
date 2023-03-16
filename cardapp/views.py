@@ -42,27 +42,19 @@ from django.views.generic import FormView
 from django.http import Http404, HttpResponse
 import os
 from django.conf import settings
+from io import BytesIO
 from mixpanel import Mixpanel
+import tempfile
 mp = Mixpanel("36cbd6f0b92d0588b757298c93c7a733")
-
-
+import qrcode
+import io
 
 
 
 
 
 # Create your views here.
-# def register_request(request):
-# 	if request.method == "POST":
-# 		form = NewUserForm(request.POST)
-# 		if form.is_valid():
-# 			user = form.save()
-# 			login(request, user)
-# 			messages.success(request, "Registration successful." )
-# 			return redirect("main:login")
-# 		messages.error(request, "Unsuccessful registration. Invalid information.")
-# 	form = NewUserForm()
-# 	return render (request=request, template_name="register.html", context={"register_form":form})
+
 def activate(request, uidb64, token):
     User = get_user_model()
     try:
@@ -140,18 +132,18 @@ def register(request):
             user.is_active = False
             
             user.save()
-            # mp.people_set(request.user.id, {
-            #     '$email': request.user.email,
-            #     '$created': '2013-04-01T13:20:00',
-            #     '$last_login': datetime.now()
-            # })
+            mp.people_set(request.user.id, {
+                '$email': request.user.email,
+                '$created': '2013-04-01T13:20:00',
+                '$last_login': datetime.now()
+            })
             mp.track(request.user.id, 'Signed Up')
          
             activateEmail(request, user, email)
             messages.success(request, '\nYour account has been created. Please check your email to activate your account.')
             
             return redirect('main:login')
-
+    request.session.flush()
     return render(request, 'register.html')
 
 
@@ -194,40 +186,12 @@ def register_request(request):
             #messages.success(request, ('Please Confirm your email to complete registration.'))
 
             return redirect('login')
-
+        request.session.flush()
         return render(request, 'register.html', {'register_form': form})
 
 
 
 
-# def login_request(request):
-#         mp.track(request.user.id, 'Viewed Login Page')
-#         if request.method == "POST":
-#             form = AuthenticationForm(request, data=request.POST)
-           
-#             if form.is_valid():
-#                 username = form.cleaned_data.get('username') 
-#                 password = form.cleaned_data.get('password')
-#                 user = authenticate(username=username, password=password)
-                
-#                 if user is not None:
-#                     login(request, user)
-#                     mp.people_set(request.user.id, {
-#                         '$name': request.user.get_full_name(),
-#                         '$email':request.user.email,
-#                         '$last_login': datetime.now()
-#                     })
-#                     mp.track(request.user.id, 'Login')
-#                     messages.success(request, f"You are now logged in as {username}.")
-#                     return redirect("main:addcard")
-#                 else:
-#                     messages.error(request,"Invalid username or password.")
-#             else:
-#                 messages.error(request,"Invalid username or password.")
-                            
-#         form = AuthenticationForm()
-       
-#         return render(request=request, template_name="login.html", context={"login_form":form})
 
 @user_passes_test(lambda u: not u.is_authenticated, login_url='main:form')
 def login_request(request):
@@ -254,6 +218,8 @@ def login_request(request):
             return redirect("main:form")
         else:
             messages.error(request,"Invalid username or password.")
+
+    request.session.flush()
             
     return render(request=request, template_name="login.html")
 
@@ -268,8 +234,10 @@ def logout_request(request):
 def homepage(request):
     mp.track(request.user.id, 'Viewed HomePage')
     if request.method == 'GET':
+        
         mydata = CardData.objects.filter(email=request.user.email)
-        print(request.user.email)
+       
+       
         #mydata = CardData.objects.all()
         print(mydata)
         return render(request=request, template_name='homepage.html',context={'mydata': mydata})
@@ -420,19 +388,48 @@ def addcard(request):
         return redirect("main:addcard")
     else:
         # Render the form for the GET request
+        request.session.flush()
         return render(request, 'addcard.html')
  
 
 
+# @login_required
+# @never_cache
+# def card(request,id):
+#     mydata = CardData.objects.get(id=id)
+#     if request.method == 'GET':
+#         mp.track(request.user.id, 'Viewed Get all card page')
+#         print(mydata.qr_code)
+#         url = request.build_absolute_uri(reverse('main:qrcard', args=[mydata.id]))
+#         qr = QRCode(version=1, error_correction=constants.ERROR_CORRECT_L)
+#         qr.add_data(url)
+#         qr.make()
+#         img = qr.make_image()
+
+#         buffered = BytesIO()
+#         img.save(buffered, format="PNG")
+#         img_str = base64.b64encode(buffered.getvalue()).decode()
+#         return render(request=request, template_name='card.html',context={'x': mydata,'qr_code': img})
+#     return render(request=request, template_name='card.html',context={'x': mydata,'qr_code': img})
+
 @login_required
 @never_cache
-def card(request,id):
+def card(request, id):
     mydata = CardData.objects.get(id=id)
     if request.method == 'GET':
         mp.track(request.user.id, 'Viewed Get all card page')
-        print(mydata.qr_code)
-        return render(request=request, template_name='card.html',context={'x': mydata})
-    return render(request=request, template_name='card.html',context={'x': mydata})
+        url = request.build_absolute_uri(reverse('main:qrcard', args=[mydata.id]))
+        qr = QRCode(version=1, error_correction=constants.ERROR_CORRECT_L)
+        qr.add_data(url)
+        qr.make()
+        img = qr.make_image()
+        img_io = io.BytesIO()
+        img.save(img_io, 'PNG')
+        img_io.seek(0)
+        img_base64 = base64.b64encode(img_io.getvalue()).decode()
+        return render(request=request, template_name='card.html', context={'x': mydata, 'qr_code': img_base64})
+    return render(request=request, template_name='card.html', context={'x': mydata})
+
 
 def qrcard(request,id):
     if request.method == 'GET':
@@ -491,13 +488,13 @@ def update(request,id):
         card_data.save()
 
         # Update the QR code image
-        url = request.build_absolute_uri(reverse('main:qrcard', args=[card_data.id]))
-        qr = QRCode(version=1, error_correction=constants.ERROR_CORRECT_L)
-        qr.add_data(url)
-        qr.make()
-        img = qr.make_image()
-        img.save(f"media/qr_codes/qr_code_{card_data.id}.png")
-        card_data.qr_code = f"media/qr_codes/qr_code_{card_data.id}.png"
+        # url = request.build_absolute_uri(reverse('main:qrcard', args=[card_data.id]))
+        # qr = QRCode(version=1, error_correction=constants.ERROR_CORRECT_L)
+        # qr.add_data(url)
+        # qr.make()
+        # img = qr.make_image()
+        # img.save(f"media/qr_codes/qr_code_{card_data.id}.png")
+        # card_data.qr_code = f"media/qr_codes/qr_code_{card_data.id}.png"
         card_data.save()
 
         messages.success(request, 'Updated Successfully!')
@@ -520,11 +517,7 @@ def delete(request,id):
         if os.path.isfile(path):
             os.remove(path)
 
-    # Delete the QR code file
-    if mydata.qr_code:
-        path1 = os.path.join(settings.MEDIA_ROOT, str(mydata.qr_code))
-        if os.path.isfile(path1):
-            os.remove(path1)
+  
             
     mydata.delete()
 
@@ -558,8 +551,10 @@ def delete_account(request):
 
     return render(request, 'setting.html')
    
-@never_cache
+
+   
 def password_reset_request(request):
+        
 	if request.method == "POST":
 		password_reset_form = PasswordResetForm(request.POST)
 		if password_reset_form.is_valid():
@@ -824,6 +819,69 @@ def sendmail(request, id):
 
     return render(request=request,template_name="homepage.html",context={'form':mydataa})
 
+
+def sendmailqr(request, id):
+   
+    mydataa = CardData.objects.filter(email=request.user.email)
+    print(mydataa)
+    if request.method == "GET":
+        mydata= CardData.objects.get(id=id)
+        email=mydata.email
+        
+           
+        vcard = vCard()
+        vcard.add('fn')
+        vcard.fn.value = mydata.fullname
+        vcard.add('ph').value= mydata.phone
+        vcard.add('email')
+        vcard.email.value = mydata.email
+        vcard.add('tel')
+        vcard.tel.value = mydata.phone
+        
+        with open(mydata.upload.path, 'rb') as img:
+            print(img)
+            image_data = base64.b64encode(img.read()).decode()
+        vcard.add('PHOTO;ENCODING=b').value=image_data
+        #vcard.add('photo').value = image_data
+        
+
+        vcard_string = vcard.serialize()
+
+
+        
+        
+        html_content = render_to_string('template_card.html', {'data': mydata}) 
+        msg = EmailMultiAlternatives (
+        'Card',
+        html_content,
+        'architashah27@gmail.com',
+        [email],
+        headers={'Content-Type':'text/html'},
+        )
+
+        
+        image = MIMEImage(mydata.upload.read())
+        image.add_header('Content-ID', '<{}>'.format(mydata.upload))
+        msg.attach(image)
+        msg.content_subtype = "html"
+
+        msg.attach(mydata.fullname+'.vcf',vcard_string,'text/vcard')
+
+        msg.send()
+        mp.track(request.user.id, 'Sent Email', {
+            'recipient': email,
+            'subject': 'Card',
+            'date': datetime.now()
+        })
+        print(request.user.id)
+        messages.success(request,"Please Check your mailbox.")
+        return redirect(reverse('main:qrcard', args=[id]))
+    else:
+        messages.error(request,"Something went wrong")
+
+    return render(request=request,template_name="homepage.html",context={'form':mydataa})
+
+
 def qrcard(request,id):
     if request.method == "GET":
         mydata = CardData.objects.get(id=id)
@@ -841,7 +899,7 @@ def qrcard(request,id):
             image_data = base64.b64encode(img.read()).decode()
         vcard.add('PHOTO;ENCODING=b').value=image_data
         response = HttpResponse(vcard.serialize(), content_type='text/vcard')
-        response['Content-Disposition'] = 'attachment; filename='+ mydata.firstname +'.vcf'
+        response['Content-Disposition'] = 'attachment; filename='+ mydata.fullname +'.vcf'
     return render(request=request,template_name="qr_card.html",context={'mydata':mydata})
 
 def qr_card(request,id):
@@ -861,7 +919,7 @@ def qr_card(request,id):
             image_data = base64.b64encode(img.read()).decode()
         vcard.add('PHOTO;ENCODING=b').value=image_data
         response = HttpResponse(vcard.serialize(), content_type='text/vcard')
-        response['Content-Disposition'] = 'attachment; filename='+ mydata.firstname +'.vcf'
+        response['Content-Disposition'] = 'attachment; filename='+ mydata.fullname +'.vcf'
     return response
 
 @login_required
