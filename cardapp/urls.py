@@ -3,7 +3,7 @@ from . import views
 from django.conf import settings  
 from django.conf.urls.static import static 
 from django.conf.urls import handler404
-
+from django.contrib.auth import views as auth_views
 
 handler404='cardapp.views.handler404'
 handler500='cardapp.views.handler500'
@@ -18,7 +18,7 @@ urlpatterns = [
     #path("",views.login_request,name="login"),
     path("login",views.login_request,name="login"),
     path("logout", views.logout_request, name= "logout"),
-    path("password_reset", views.password_reset_request, name="password_reset"),  
+   # path("password_reset", views.password_reset_request, name="password_reset"),  
     path('activate/<uidb64>/<token>', views.activate, name='activate'),
     path("card/<int:id>",views.card,name='card'),
     path("qrcard/<int:id>",views.qrcard,name='qrcard'),
@@ -31,9 +31,13 @@ urlpatterns = [
     path("sendmailqr/<int:id>",views.sendmailqr,name="sendmailqr"),
     path("setting",views.setting,name="setting"),
     path("delete",views.delete_account,name='delete_account'),
-   
-   
-]
+    path('password_reset/', views.password_reset_request, name='password_reset'),
+    path('password_reset/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password/password_reset_done.html'), name='password_reset_done'),
+    path('password_reset/complete/', auth_views.PasswordResetCompleteView.as_view(template_name='password/password_reset_complete.html'), name='password_reset_complete'),
+
+
+   ]
 
 
 

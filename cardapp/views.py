@@ -32,6 +32,7 @@ from .models import CardData
 from email.mime.image import MIMEImage
 from vobject import vCard
 import base64
+from django.contrib.auth import views as auth_views
 from qrcode import QRCode,constants
 from django.core.exceptions import ValidationError
 from django.conf import settings
@@ -143,7 +144,7 @@ def register(request):
             messages.success(request, '\nYour account has been created. Please check your email to activate your account.')
             
             return redirect('main:login')
-    request.session.flush()
+   
     return render(request, 'register.html')
 
 
@@ -186,7 +187,7 @@ def register_request(request):
             #messages.success(request, ('Please Confirm your email to complete registration.'))
 
             return redirect('login')
-        request.session.flush()
+        
         return render(request, 'register.html', {'register_form': form})
 
 
@@ -219,7 +220,7 @@ def login_request(request):
         else:
             messages.error(request,"Invalid username or password.")
 
-    request.session.flush()
+ 
             
     return render(request=request, template_name="login.html")
 
@@ -374,21 +375,21 @@ def addcard(request):
                 else:
                     my_model_instance.save()
 
-                    url = request.build_absolute_uri(reverse('main:qrcard', args=[my_model_instance.id]))
-                    qr = QRCode(version=1, error_correction=constants.ERROR_CORRECT_L)
-                    qr.add_data(url)
-                    qr.make()
-                    img = qr.make_image()
-                    img.save("media/qr_codes/qr_code_{}.png".format(my_model_instance.id))
-                    my_model_instance.qr_code = "media/qr_codes/qr_code_{}.png".format(my_model_instance.id)
-                    my_model_instance.save()
+                    # url = request.build_absolute_uri(reverse('main:qrcard', args=[my_model_instance.id]))
+                    # qr = QRCode(version=1, error_correction=constants.ERROR_CORRECT_L)
+                    # qr.add_data(url)
+                    # qr.make()
+                    # img = qr.make_image()
+                    # img.save("media/qr_codes/qr_code_{}.png".format(my_model_instance.id))
+                    # my_model_instance.qr_code = "media/qr_codes/qr_code_{}.png".format(my_model_instance.id)
+                    # my_model_instance.save()
 
                     messages.success(request, 'Saved Successfully!')
                     return redirect("main:form")
         return redirect("main:addcard")
     else:
         # Render the form for the GET request
-        request.session.flush()
+        
         return render(request, 'addcard.html')
  
 
@@ -566,12 +567,7 @@ def password_reset_request(request):
 					subject = "Password Reset Requested"
 					email_template_name = "password/password_reset_email.txt"
 					c = {
-					# "email":user.email,
-					# 'domain':'127.0.0.1:8000',
-					# 'site_name': 'Website',
-					# "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-					# 'token': default_token_generator.make_token(user),
-					# 'protocol': 'http',
+		
                     
                     'user': user.email,
                     'domain': get_current_site(request).domain,
@@ -594,6 +590,29 @@ def password_reset_request(request):
 	password_reset_form = PasswordResetForm()
 	return render(request=request, template_name="password/password_reset.html", context={"password_reset_form":password_reset_form})
 
+def password_reset_confirm(request, uidb64, token):
+    UserModel = get_user_model()
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = UserModel.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            new_password = request.POST.get('password1')
+            confirm_new_password = request.POST.get('password2')
+            if new_password == confirm_new_password:
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, 'Your password has been successfully reset. You can now log in with your new password.')
+                return redirect(reverse('main:login'))
+            else:
+                messages.error(request, 'New passwords do not match.')
+        return render(request, 'password/password_reset_confirm.html')
+    else:
+        messages.error(request, 'The password reset link is invalid or has expired.')
+        return redirect(reverse('main:password_reset'))
 
 # def send(request,id):
 #     sendEmail = sendForm(request.POST)   
@@ -932,3 +951,5 @@ def handler404(request, exception):
 
 def handler500(request):
     return render(request, '500.html', status=500)
+
+
