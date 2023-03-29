@@ -4,9 +4,9 @@
      box-sizing: border-box;
  }
 
- .decor{
-    text-decoration: none;
-    color: black;
+ .decor {
+     text-decoration: none;
+     color: black;
  }
 
  body {
@@ -87,8 +87,8 @@
      display: flex;
  }
 
- #card-container-fluid{
-    display: block;
+ #card-container-fluid {
+     display: block;
  }
 
  nav {
@@ -105,7 +105,7 @@
  .sidebar ul>li {
      text-decoration: none;
      list-style: none;
-     padding: 8px 8px 17px 8px;
+     padding: 8px 8px 17px 10px;
      font-family: 'Poppins';
      color: white;
      cursor: pointer;
@@ -118,10 +118,12 @@
      margin-bottom: 40px;
  }
 
- ;
+ .sidebar  img{
+    margin-right: 15px;
+ }
 
  .logout-sidebar {
-     margin: 80px !important;
+    margin-top: 100px !important;
  }
 
  .p-3 {
@@ -233,12 +235,14 @@
      z-index: 1;
      padding: 0;
  }
- .parent2 > .card-top{
-    height: 280px;
+
+ .parent2>.card-top {
+     height: 280px;
  }
- .parent2 > .card-top > .box2 > img{
-    width: 100%;
-    position: relative;
+
+ .parent2>.card-top>.box2>img {
+     width: 100%;
+     position: relative;
  }
 
  #chkTogleMenu:checked~.content .parent {
@@ -256,7 +260,7 @@
  }
 
  .custom-card {
-     width: 100%;
+     width: 250px;
      margin: 20px 0;
      height: 340px;
      position: relative;
@@ -264,12 +268,53 @@
      background-color: #fff;
      box-shadow: 0px 0px 15px #999;
  }
- .custom-card:hover{
-    color: orangered;
+
+ .card-bottom:hover {
+     color: orangered;
  }
 
- .custom-card:first-child{
-    margin: -40px 0;
+ .custom-card:first-child {
+     margin: 0px 0;
+ }
+
+ .three-dots {
+     top: 15px;
+     right: 15px;
+     z-index: 1;
+     position: absolute;
+     box-sizing: border-box;
+ }
+
+ .three-dots>label {
+     display: block;
+     padding: 10px;
+     position: relative;
+ }
+
+ #chkOptions:checked~.options {
+     display: block;
+ }
+
+ .options {
+     top: 15px;
+     right: 15px;
+     z-index: 2;
+     padding: 10px;
+     display: none;
+     border-radius: 10px;
+     position: absolute;
+     background-color: #fff;
+ }
+
+ .options>ul>li {
+     text-align: left;
+ }
+
+ .options>ul>li>a {
+     color: black;
+     padding: 5px;
+     display: block;
+     text-decoration: none;
  }
 
  .custom-card>.card-top,
@@ -300,7 +345,7 @@
      transform: translateY(-50%);
  }
 
- .custom-card>.card-bottom {
+ .custom-card>a>.card-bottom {
      padding: 10px 0;
      font-family: 'Poppins';
      font-weight: 600;
@@ -552,48 +597,13 @@
      width: 100%;
  }
 
- .img-rel{
-    position: relative;
-    width: 100%;
-    height: 100%;
+ .img-rel {
+     position: relative;
+     width: 100%;
+     height: 100%;
  }
 
- .popup{
-    z-index: 1;
-    width: 100%;
-    padding: 15px 15px 0 10px;
-    display: block;
-    text-align: right;
-    position: absolute;
-    box-sizing: border-box;
-}
-.right{ padding-top: 5px; cursor: pointer;}
-.left,.right{
-    display: inline-block;
-}
-.left{ display: none;}
-.left{
-    background: white;
-    text-align: left;
-    border-radius: 5px;
-    padding: 5px;
-    vertical-align: top;
-}
-.left > ul{
-    margin:0;
-    padding: 0;
-    list-style: none;
-}
 
-.left>ul>li{
-    font-size: 15px;
-    font-family: 'K2D';
-    padding: 5px;
-}
-
-#chkPopup:checked ~ .left{
-    display: inline-block;
-}
 
 
 
@@ -610,32 +620,35 @@
          position: relative;
      }
 
-     .form-container{
-        width: 350px;
+     .form-container {
+         width: 350px;
      }
 
-     .parent2 > .card-top{
-        height: 350px;
+     .parent2>.card-top {
+         height: 350px;
      }
 
-     .card-container{
-        justify-content: center;
+     .card-container {
+         justify-content: center;
      }
-     .custom-card{
-        width: 300px;
-        margin: 20px;
+
+     .custom-card {
+         width: 300px;
+         margin: 20px;
      }
-     .custom-card:first-child{
-        margin: 20px;
+
+     .custom-card:first-child {
+         margin: 20px;
      }
  }
 
  @media only screen and (min-width: 576px) {}
 
  @media only screen and (min-width: 768px) {
-    .container-fluid{
-        display: block;
-    }
+     .container-fluid {
+         display: block;
+     }
+
      .sidebar {
          width: 300px;
      }
@@ -656,22 +669,36 @@
          max-width: calc(100% - 55px);
      }
 
-     .col-md-9 > .row{ display: block   ;}
-     .col-md-3, .col-md-9, .col-md-5{
-        width: 100%;
-        display: block !important;
+     .col-md-9>.row {
+         display: block;
      }
 
-     .form-container{
-        width: 100%;
-        position: relative;
+     .col-md-3,
+     .col-md-9,
+     .col-md-5 {
+         width: 100%;
+         display: block !important;
      }
 
-     .parent{
-        display: none !important;
+     .form-container {
+         width: 100%;
+         position: relative;
      }
-     .card-container{
-        justify-content: flex-start;
+
+     .parent {
+         display: none !important;
+     }
+
+     .card-container {
+         justify-content: flex-start;
+     }
+
+     .custom-card {
+         width: 250px;
+         height: 280px;
+     }
+     .custom-card > .card-top{
+        height: 230px;
      }
  }
 
@@ -716,20 +743,29 @@
          display: block;
      }
 
-     .col-md-3, .col-md-5, .col-md-9{
-        width: auto;
-        display: inline-block !important;
+     .col-md-3,
+     .col-md-5,
+     .col-md-9 {
+         width: auto;
+         display: inline-block !important;
      }
 
-     .parent { display: block !important; width: 15%;}
-     .parent2{ display: none !important;}
-
-     .col-md-9{
-        position: relative;
-        width: 70% !important;    
+     .parent {
+         display: block !important;
+         width: 15%;
      }
-     .col-md-5{
-        width: 45%;
+
+     .parent2 {
+         display: none !important;
+     }
+
+     .col-md-9 {
+         position: relative;
+         width: 70% !important;
+     }
+
+     .col-md-5 {
+         width: 45%;
      }
  }
 
@@ -743,7 +779,9 @@
          min-width: 300px;
      }
 
-     .parent { width: 30%;}
+     .parent {
+         width: 30%;
+     }
 
  }
 
@@ -754,3 +792,51 @@
  @media only screen and (min-width: 1536px) {}
 
  @media only screen and (min-width: 1920px) {}
+
+ /*Notification*/
+
+ .alert-success {
+     position: absolute;
+     right: 18px;
+     font-family: 'Poppins';
+     font-size: 15px;
+     border-radius: 6px;
+     padding: 5px;
+     font-weight: bold;
+     border: green 1px solid;
+     background-color: #A2D8AD;
+ }
+
+ .alert-danger {
+     position: absolute;
+     right: 18px;
+     font-family: 'Poppins';
+     font-size: 12px;
+     border-radius: 6px;
+     padding: 3px 12px;
+     border: #e53804 1px solid;
+     background-color: #e9abaa;
+ }
+
+ .notify {
+     text-align: right;
+     width: 100%;
+ }
+
+ .btn-saved {
+     background-color: orangered;
+     border: transparent;
+     color: white;
+     border-radius: 5px;
+     padding: 5px;
+ }
+
+ .no-card {
+     text-align: center;
+     font-family: 'K2D';
+ }
+
+ .decor-sidebar{
+    text-decoration: none;
+    color:white
+ }

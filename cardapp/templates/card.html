@@ -159,7 +159,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <title>Quickshare | Card</title>
-    <link rel="stylesheet"  href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
 </head>
 
@@ -168,16 +168,16 @@
         <input type="checkbox" name="chkTogleMenu" id="chkTogleMenu">
         <section class="sidebar">
             <ul>
-              <li><img src="{% static 'images/logo_icon.svg' %}" alt="logo"></li>
-              <li><img src="{% static 'images/card_icon.svg' %}" alt="card_icon"> Cards</li>
-              <li><img src="{% static 'images/contact_icon.svg' %}" alt="contact_icon"> Contacts</li>
-              <li><img src="{% static 'images/background_icon.svg' %}" alt="background_icon"> Backgrounds</li>
-              <li><img src="{% static 'images/email_icon.svg' %}" alt="email_icon"> Email Signatures</li>
-              <li><img src="{% static 'images/setting_icon.svg' %}" alt="setting_icon"> Setting</li>
-              <li class="logout-sidebar"><img src="{% static 'images/logout_icon.svg' %}" alt="logout"> Logout</li>
-              <li><label for="chkTogleMenu">Toggle Menu</label></li>
-            </ul>
-            
+                <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/logo_icon.svg' %}" alt="logo"></a> </li>
+                <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/card_icon.svg' %}" alt="card_icon"> Cards</a></li>
+                <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/contact_icon.svg' %}" alt="contact_icon"> Contacts</a></li>
+                <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/background_icon.svg' %}" alt="background_icon"> Backgrounds</a></li>
+                <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/email_icon.svg' %}" alt="email_icon"> Email Signatures</a></li>
+                <li><a href="/setting" class="decor-sidebar"><img src="{% static 'images/setting_icon.svg' %}" alt="setting_icon"> Setting</a></li>
+                <li><label for="chkTogleMenu"><img src="{% static 'images/toggle.svg' %}" alt="setting_icon" style="filter: invert(1);"> Toggle Menu</label></li>
+                <li class="logout-sidebar" ><a href="/logout" class="decor-sidebar"><img src="{% static 'images/logout_icon.svg' %}" alt="logout"> Logout</a></li>
+              </ul>
+
         </section>
         <section class="content">
             <nav>
@@ -188,8 +188,7 @@
                 </div>
                 <label>Archita THE GREAT</label>
             </nav>
-
-
+            <label class="notify">{% include 'messages.html' %}</label>
             <div class="container-fluid p-3">
                 <div class="d-flex align-items-center">
                     <input type="checkbox" name="chkToggleCardMobile" id="chkToggleCardMobile" class="d-none">
@@ -197,29 +196,30 @@
                     <div class="info-card" id="info-card">
                         <div class="card-top">
                             <div class="box2">
-                              {% if x.upload %}
-                              <label for="upload"><img src={{x.upload.url}} alt=""></label>
-                              {% endif %}
+                                {% if x.upload %}
+                                <label for="upload"><img src={{x.upload.url}} alt="" style="width: 100%;"></label>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12 card-info">
                                     <h2>{{x.fullname}}</h2>
-                                    <p>{{x.department}} at {{x.company}}</p>
+                                    <p> <b>{{x.department}} at {{x.company}}</b> </p>
                                     <p><img src="{% static 'images/phone_card.svg' %}" alt="">{{x.phone}}</p>
                                     <p><img src="{% static 'images/email_card.svg' %}" alt="">{{x.email}}</p>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12 text-center mb-2">
-                                  <a href="{% url 'main:update' x.id %}"> 
-                                    <button type="button" class="btn btn-default btn-circle" >
-                                        <img src="{% static 'images/edit_icon.svg' %}" alt="">
-                                        <span>Update</span>
-                                    </button>
+                                    <a href="{% url 'main:update' x.id %}">
+                                        <button type="button" class="btn btn-default btn-circle">
+                                            <img src="{% static 'images/edit_icon.svg' %}" alt="">
+                                            <span>Update</span>
+                                        </button>
                                     </a>
-                                    <button type="button" class="btn btn-default btn-circle">
+                                    <button type="button" class="btn btn-default btn-circle" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal">
                                         <img src="{% static 'images/delete_card_icon.svg' %}" alt="">
                                         <span>Delete</span>
                                     </button>
@@ -234,7 +234,7 @@
                         <img src="{% static 'images/arrow.svg' %}" alt="">
                     </div>
                     <div class="qr-container" id="qrcode">
-                      <img src="data:image/png;base64,{{ qr_code }}" alt="QR code">
+                        <img src="data:image/png;base64,{{ qr_code }}" alt="QR code">
                         <p>Scan QR code to save contact</p>
                         <label for="chkToggleCard" class="mb-1">
                             Share Via<img src="{% static 'images/arrow_redirect.svg' %}" alt="">
@@ -245,23 +245,26 @@
                     </div>
                     <div class="qr-container" id="email">
                         <h6>Email your personal card</h6>
-                        <div class="position-relative mb-1">
-                            <input type="text" id="fullname" name="fullname" placeholder="Full name" maxlength="32"
-                                class="textbox">
-                            <img src="{% static 'images/username.svg' %}" alt="fullname">
-                        </div>
-                        <div class="position-relative mb-1">
-                            <input type="text" id="email" name="email" placeholder="Email" maxlength="32"
-                                class="textbox">
-                            <img src="{% static 'images/email_add.svg' %}" alt="email">
-                        </div>
-                        <div class="position-relative mb-1">
-                            <textarea class="form-control textbox" id="exampleFormControlTextarea1" rows="3"
-                                placeholder="Message"></textarea>
-                        </div>
-                        <div class="position-relative mt-2 mb-2">
-                            <div class="btn btn-save">Submit</div>
-                        </div>
+                        <form class="email" method="POST" action="{% url 'main:send' x.id %}">
+                            {% csrf_token %}
+                            <div class="position-relative mb-1">
+                                <input type="text" id="fullname" name="name" placeholder="Full name" maxlength="32"
+                                    class="textbox">
+                                <img src="{% static 'images/username.svg' %}" alt="fullname">
+                            </div>
+                            <div class="position-relative mb-1">
+                                <input type="text" id="email" name="email" placeholder="Email" maxlength="32"
+                                    class="textbox">
+                                <img src="{% static 'images/email_add.svg' %}" alt="email">
+                            </div>
+                            <div class="position-relative mb-1">
+                                <textarea class="form-control textbox" id="exampleFormControlTextarea1" rows="3"
+                                    placeholder="Message" name="message"></textarea>
+                            </div>
+                            <div class="position-relative mt-2 mb-2">
+                                <input type="Submit" class="btn btn-save" placeholder="Submit">
+                            </div>
+                        </form>
                         <div class="position-relative mt-2 mb-2">
                             <label class="mb-1">Share with</label>
                             <ul>
@@ -290,6 +293,21 @@
 
 </body>
 
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h2>Are you sure you want to Delete your Account?</h2>
+                <a href=""><button type="button"
+                        class="btn btn-save">Yes,Delete</button></a>
+                <button type="button" class="btn btn-clear" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg"
     version="1.1">
     <defs>
@@ -304,5 +322,12 @@
     integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
     crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+    });
+</script>
 
 </html>

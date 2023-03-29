@@ -174,14 +174,14 @@
     <input type="checkbox" name="chkTogleMenu" id="chkTogleMenu">
     <section class="sidebar">
       <ul>
-        <li><img src="{% static 'images/logo_icon.svg' %}" alt="logo"></li>
-        <li><img src="{% static 'images/card_icon.svg' %}" alt="card_icon"> Cards</li>
-        <li><img src="{% static 'images/contact_icon.svg' %}" alt="contact_icon"> Contacts</li>
-        <li><img src="{% static 'images/background_icon.svg' %}" alt="background_icon"> Backgrounds</li>
-        <li><img src="{% static 'images/email_icon.svg' %}" alt="email_icon"> Email Signatures</li>
-        <li><img src="{% static 'images/setting_icon.svg' %}" alt="setting_icon"> Setting</li>
-        <li class="logout-sidebar"><img src="{% static 'images/logout_icon.svg' %}" alt="logout"> Logout</li>
-        <li><label for="chkTogleMenu">Toggle Menu</label></li>
+        <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/logo_icon.svg' %}" alt="logo"></a> </li>
+        <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/card_icon.svg' %}" alt="card_icon"> Cards</a></li>
+        <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/contact_icon.svg' %}" alt="contact_icon"> Contacts</a></li>
+        <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/background_icon.svg' %}" alt="background_icon"> Backgrounds</a></li>
+        <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/email_icon.svg' %}" alt="email_icon"> Email Signatures</a></li>
+        <li><a href="/setting" class="decor-sidebar"><img src="{% static 'images/setting_icon.svg' %}" alt="setting_icon"> Setting</a></li>
+        <li><label for="chkTogleMenu"><img src="{% static 'images/toggle.svg' %}" alt="setting_icon" style="filter: invert(1);"> Toggle Menu</label></li>
+        <li class="logout-sidebar" ><a href="/logout" class="decor-sidebar"><img src="{% static 'images/logout_icon.svg' %}" alt="logout"> Logout</a></li>
       </ul>
     </section>
     <section class="content">
@@ -193,15 +193,24 @@
         </div>
         <label>Archita THE GREAT</label>
       </nav>
+      <label class="notify">{% include 'messages.html' %}</label>
       <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="container-fluid p-3">
           <div class="row form-container">
             <div class="col-md-3 parent">
+              
               <div class="box" style="background-image: url({{card_data.upload.url}});background-size: cover;
               background-position: center;">
+              
                 <label for="upload">
-                    
+                  {% if card_data.upload %}
+                  <img src="{{ card_data.upload.url }}" alt="" class="add-img" id="add-img" style="position: relative;
+                width: 100%;">
+                  {% else%}
+                  <img src="{% static 'images/sample.png' %}" alt="" class="add-img-icon" id="add-img-icon" style="    position: relative;
+                width: 100%;">
+                  {% endif %}
                 </label>
               </div>
             </div>
@@ -209,12 +218,12 @@
             <div class="col-md-3 parent2" style="padding: 0;">
               <div class="card-top">
                 <div class="box2">
-                  <label for="upload"></label>
-                  {% if card_data.upload %}
-                  <img src="{{ card_data.upload.url }}" alt="" class="add-img" id="add-img">
-                  {% else%}
-                  <img src="{% static 'images/sample.png' %}" alt="" class="add-img-icon" id="add-img-icon">
-                  {% endif %}
+                  <label for="upload">
+                    {% if card_data.upload %}
+                    <img src="{{ card_data.upload.url }}" alt="" class="add-img" id="add-img">
+                    {% else%}
+                    <img src="{% static 'images/sample.png' %}" alt="" class="add-img-icon" id="add-img-icon">
+                    {% endif %}
                   </label>
                   <input type="file" name="upload" id="upload" style="display: none" {% if card_data %}
                     onchange="changeImg(this, 'update')" {% else %} onchange="changeImg(this, 'add')" {% endif %}>
@@ -325,6 +334,13 @@
     image.classList.remove("add-img-icon")
     image.classList.add("add-img")
   }
+</script>
+<script>
+  $(document).ready(function () {
+    setTimeout(function () {
+      $('.alert').fadeOut('slow');
+    }, 5000);
+  });
 </script>
 
 </html>

@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import login
 from django.contrib import messages
 from .forms import NewUserForm
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.forms import AuthenticationForm 
 from django.template import loader
 from django.urls import reverse
@@ -219,9 +219,7 @@ def login_request(request):
             return redirect("main:form")
         else:
             messages.error(request,"Invalid username or password.")
-
- 
-            
+    
     return render(request=request, template_name="login.html")
 
 
@@ -361,7 +359,7 @@ def addcard(request):
         my_model_instance.email = email
         my_model_instance.upload = upload
 
-        if not fullname or not email or not cardname or not department or not company or not phone or not email or not upload:
+        if not fullname or not email or not cardname or not department or not company or not phone or not email :
                messages.error(request, 'Please enter all details!')
         else:
             # Check if phone number already exists
@@ -734,26 +732,17 @@ def send(request, id):
             image_data = base64.b64encode(img.read()).decode()
         vcard.add('PHOTO;ENCODING=b').value=image_data
         #vcard.add('photo').value = image_data
-        
-
         vcard_string = vcard.serialize()
-
-
-        
         
         html_content = render_to_string('template_card.html',  {'data': mydata}) 
+        email_content = '{}\n\n{}'.format(message, html_content)
         msg = EmailMultiAlternatives (
-        fullname,
-        html_content,
-       
+       'Card',
+        email_content,
         'architashah27@gmail.com',
         [email],
-       
         headers={'Content-Type':'text/html'},
-       
         )
-
-        
         image = MIMEImage(mydata.upload.read())
         image.add_header('Content-ID', '<{}>'.format(mydata.upload))
         msg.attach(image)
@@ -779,11 +768,11 @@ def send(request, id):
 def sendmail(request, id):
    
     
-    mydataa = CardData.objects.filter(email=request.user.email)
-    print(mydataa)
-    if request.method == "GET":
-        mydata= CardData.objects.get(id=id)
-        email=mydata.email
+    mydata = CardData.objects.get(id=id)
+    if request.method == "POST":
+        email=request.POST.get('email')
+        message = request.POST.get('message')
+        fullname=request.POST.get('name')
         
            
         vcard = vCard()
@@ -803,19 +792,16 @@ def sendmail(request, id):
         
 
         vcard_string = vcard.serialize()
-
-
-        
-        
-        html_content = render_to_string('template_card.html', {'data': mydata}) 
+    
+        html_content = render_to_string('template_card.html',  {'data': mydata}) 
+        email_content = '{}\n\n{}'.format(message, html_content)
         msg = EmailMultiAlternatives (
-        'Card',
-        html_content,
+       'Card',
+        email_content,
         'architashah27@gmail.com',
         [email],
         headers={'Content-Type':'text/html'},
         )
-
         
         image = MIMEImage(mydata.upload.read())
         image.add_header('Content-ID', '<{}>'.format(mydata.upload))
@@ -836,7 +822,7 @@ def sendmail(request, id):
     else:
         messages.error(request,"Something went wrong")
 
-    return render(request=request,template_name="homepage.html",context={'form':mydataa})
+    return render(request=request,template_name="homepage.html",context={'form':mydata})
 
 
 def sendmailqr(request, id):
@@ -952,4 +938,21 @@ def handler404(request, exception):
 def handler500(request):
     return render(request, '500.html', status=500)
 
+@login_required
+def change_password_view(request):
+    if request.method == 'POST':
+        new_password1 = request.POST['password1']
+        new_password2 = request.POST['password2']
+        
+        if new_password1 != new_password2:
+            messages.error(request, 'New passwords do not match')
+        else:
+            user = request.user
+            user.set_password(new_password1)
+            user.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Password changed successfully')
+            return redirect('/setting')
+
+    return render(request, 'setting.html')
 

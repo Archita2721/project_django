@@ -112,27 +112,22 @@
         <input type="checkbox" name="chkTogleMenu" id="chkTogleMenu">
         <section class="sidebar">
             <ul>
-              <li><img src="{% static 'images/logo_icon.svg' %}" alt="logo"></li>
-              <li><img src="{% static 'images/card_icon.svg' %}" alt="card_icon"> Cards</li>
-              <li><img src="{% static 'images/contact_icon.svg' %}" alt="contact_icon"> Contacts</li>
-              <li><img src="{% static 'images/background_icon.svg' %}" alt="background_icon"> Backgrounds</li>
-              <li><img src="{% static 'images/email_icon.svg' %}" alt="email_icon"> Email Signatures</li>
-              <li><img src="{% static 'images/setting_icon.svg' %}" alt="setting_icon"> Setting</li>
-              <li class="logout-sidebar"><img src="{% static 'images/logout_icon.svg' %}" alt="logout"> Logout</li>
-              <li><label for="chkTogleMenu">Toggle Menu</label></li>
+              <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/logo_icon.svg' %}" alt="logo"></a> </li>
+              <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/card_icon.svg' %}" alt="card_icon"> Cards</a></li>
+              <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/contact_icon.svg' %}" alt="contact_icon"> Contacts</a></li>
+              <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/background_icon.svg' %}" alt="background_icon"> Backgrounds</a></li>
+              <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/email_icon.svg' %}" alt="email_icon"> Email Signatures</a></li>
+              <li><a href="/setting" class="decor-sidebar"><img src="{% static 'images/setting_icon.svg' %}" alt="setting_icon"> Setting</a></li>
+              <li><label for="chkTogleMenu"><img src="{% static 'images/toggle.svg' %}" alt="setting_icon" style="filter: invert(1);"> Toggle Menu</label></li>
+              <li class="logout-sidebar" ><a href="/logout" class="decor-sidebar"><img src="{% static 'images/logout_icon.svg' %}" alt="logout"> Logout</a></li>
             </ul>
-            <p>
-
-
-            </p>
-            <label for="chkTogleMenu">Toggle Menu</label>
+           
         </section>
         <section class="content">
             <nav>
                 <ul>Archita The great Shah</ul>
             </nav>
-
-
+            <label class="notify">{% include 'messages.html' %}</label>
             <div class="container-fluid p-3">
                 <div class="row form-container">
                     <div class="col-md-12 ">
@@ -175,13 +170,13 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body">
-                    <form >
+                    <form method="POST" action="{% url 'main:change_password' %}">
+                        {% csrf_token %}
                         <div class="row">
                             <div class="col-12 col-md-12 position-relative ">
                                 <div class="login-modal">
                                     <h2 class="login-h2">Set New Password</h2>
                                     <img src="{% static 'images/line.svg' %}" class="rect-line" alt="rect-line">
-                                    <form>
                                         <div class="position-relative mt-2">
                                             <input type="password" id="password1" name="password1" placeholder="New Password"
                                                 maxlength="32" class="textbox">
@@ -215,5 +210,28 @@
     integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
     crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+<script>
+    function passwordToggle(imgId, passwordId) {
+        let img = document.getElementById(imgId)
+        let password = document.getElementById(passwordId)
+
+        if (password.type == "password") {
+            img.src = "{% static 'images/password_close.svg' %}";
+            password.type = "text"
+        } else {
+            img.src = "{% static 'images/password_open.svg' %}";
+            password.type = "password"
+        }
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+    });
+</script>
 
 </html>
