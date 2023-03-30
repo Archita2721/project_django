@@ -17,7 +17,7 @@ class CardData(models.Model):
     department=models.CharField(blank=True,max_length=50)
     company=models.CharField(blank=True,max_length=100)
     phone = models.CharField(null=False, blank=False, unique=True,max_length=11)
-    upload = models.ImageField(blank=True,upload_to ='uploads',null=True)
+    upload = models.FileField(blank=True,upload_to ='uploads',null=True)
     email=models.EmailField(blank=True,max_length = 254)
     cardname =models.CharField(max_length=100,blank=True)
     #qr_code = models.ImageField(upload_to='qr_codes', null=True,blank=True)

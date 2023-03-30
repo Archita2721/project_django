@@ -300,7 +300,7 @@
         <div class="modal-content">
             <div class="modal-body">
                 <h2>Are you sure you want to Delete your Account?</h2>
-                <a href=""><button type="button"
+                <a href="{% url 'main:delete' x.id %}"><button type="button"
                         class="btn btn-save">Yes,Delete</button></a>
                 <button type="button" class="btn btn-clear" data-bs-dismiss="modal">Close</button>
             </div>

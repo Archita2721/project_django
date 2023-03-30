@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     "phonenumber_field",
     'qr_code',
+    'storages',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -166,3 +167,10 @@ LOGIN_REDIRECT_URL = '/'
 
 STATIC_ROOT = '/var/www/project_django/assets/'
 
+#STORAGES = {"default": "storages.backends.s3boto3.S3Boto3Storage"}
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_ACCESS_KEY_ID= 'AKIA5NZ245NVP7VDCD6F'
+AWS_SECRET_ACCESS_KEY= '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'
+AWS_STORAGE_BUCKET_NAME= 'quickshare-bucket'
+AWS_QUERYSTRING_AUTH= False
