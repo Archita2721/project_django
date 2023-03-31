@@ -168,15 +168,23 @@
         <input type="checkbox" name="chkTogleMenu" id="chkTogleMenu">
         <section class="sidebar">
             <ul>
-                <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/logo_icon.svg' %}" alt="logo"></a> </li>
-                <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/card_icon.svg' %}" alt="card_icon"> Cards</a></li>
-                <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/contact_icon.svg' %}" alt="contact_icon"> Contacts</a></li>
-                <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/background_icon.svg' %}" alt="background_icon"> Backgrounds</a></li>
-                <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/email_icon.svg' %}" alt="email_icon"> Email Signatures</a></li>
-                <li><a href="/setting" class="decor-sidebar"><img src="{% static 'images/setting_icon.svg' %}" alt="setting_icon"> Setting</a></li>
-                <li><label for="chkTogleMenu"><img src="{% static 'images/toggle.svg' %}" alt="setting_icon" style="filter: invert(1);"> Toggle Menu</label></li>
-                <li class="logout-sidebar" ><a href="/logout" class="decor-sidebar"><img src="{% static 'images/logout_icon.svg' %}" alt="logout"> Logout</a></li>
-              </ul>
+                <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/logo_icon.svg' %}"
+                            alt="logo"></a> </li>
+                <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/card_icon.svg' %}"
+                            alt="card_icon"> Cards</a></li>
+                <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/contact_icon.svg' %}"
+                            alt="contact_icon"> Contacts</a></li>
+                <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/background_icon.svg' %}"
+                            alt="background_icon"> Backgrounds</a></li>
+                <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/email_icon.svg' %}" alt="email_icon">
+                        Email Signatures</a></li>
+                <li><a href="/setting" class="decor-sidebar"><img src="{% static 'images/setting_icon.svg' %}"
+                            alt="setting_icon"> Setting</a></li>
+                <li><label for="chkTogleMenu"><img src="{% static 'images/toggle.svg' %}" alt="setting_icon"
+                            style="filter: invert(1);"> Toggle Menu</label></li>
+                <li class="logout-sidebar" data-bs-toggle="modal" data-bs-target="#logoutModal"><img
+                        src="{% static 'images/logout_icon.svg' %}" alt="logout"> Logout</li>
+            </ul>
 
         </section>
         <section class="content">
@@ -219,7 +227,7 @@
                                         </button>
                                     </a>
                                     <button type="button" class="btn btn-default btn-circle" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal">
+                                        data-bs-target="#deleteModal">
                                         <img src="{% static 'images/delete_card_icon.svg' %}" alt="">
                                         <span>Delete</span>
                                     </button>
@@ -289,8 +297,6 @@
             </div>
         </section>
     </main>
-
-
 </body>
 
 <!-- Delete Modal -->
@@ -307,7 +313,19 @@
         </div>
     </div>
 </div>
-
+<!-- Logout Modal -->
+<div class="modal fade" id="logoutModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h2>Are you sure you want to Logout your Account?</h2>
+                <a href="{% url 'main:logout' %}"><button type="button" class="btn btn-save">Logout</button></a>
+                <button type="button" class="btn btn-clear" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg"
     version="1.1">
     <defs>

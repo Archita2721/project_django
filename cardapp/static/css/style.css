@@ -231,7 +231,9 @@ section {
     font-weight: 700;
     text-decoration: none;
 }
-
+.spinner-border {
+    margin-right: 5px;
+}
 @media only screen and (max-width: 320px) {
     section {
         overflow: hidden;

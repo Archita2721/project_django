@@ -89,12 +89,16 @@ def register(request):
         # Validate form data
         if not username or not email or not password or not confirm_password:
             messages.error(request, 'All fields are required.')
+            return render(request, 'register.html')
         elif password != confirm_password:
             messages.error(request, 'Passwords do not match.')
+            return render(request, 'register.html')
         elif User.objects.filter(username=username).exists():
             messages.error(request, 'Username is already taken.')
+            return render(request, 'register.html')
         elif User.objects.filter(email=email).exists():
             messages.error(request, 'Email address is already registered.')
+            return render(request, 'register.html')
         else:
             # Create new user instance
             user = User.objects.create_user(
@@ -117,9 +121,7 @@ def register(request):
             activateEmail(request, user, email)
             messages.success(
                 request, '\nYour account has been created. Please check your email to activate your account.')
-
             return redirect('main:login')
-
     return render(request, 'register.html')
 
 
@@ -160,11 +162,8 @@ def register_request(request):
                 'token': account_activation_token.make_token(user),
             })
             user.email_user(subject, message)
-
-            # messages.success(request, ('Please Confirm your email to complete registration.'))
-
+            messages.success(request, ('Please Confirm your email to complete registration.'))
             return redirect('login')
-
         return render(request, 'register.html', {'register_form': form})
 
 
@@ -196,7 +195,7 @@ def register_request(request):
 
 #     return render(request=request, template_name="login.html")
 
-
+@never_cache
 @user_passes_test(lambda u: not u.is_authenticated, login_url='main:form')
 def login_request(request):
     mp.track(request.user.id, 'Viewed Login Page')
@@ -227,7 +226,7 @@ def login_request(request):
 
     return render(request=request, template_name="login.html")
 
-
+@never_cache
 def logout_request(request):
     logout(request)
     messages.success(request, "You have successfully logged out.")
@@ -470,7 +469,7 @@ def update(request, id):
 #     mydata.delete()
 
 #     return redirect('main:form')
-
+@never_cache
 def delete(request, id):
     mydata = CardData.objects.get(id=id)
 
@@ -581,7 +580,8 @@ def password_reset_confirm(request, uidb64, token):
         return redirect(reverse('main:password_reset'))
 
 
-
+@never_cache
+@login_required
 def send(request, id):
     mydata = CardData.objects.get(id=id)
     if request.method == "POST":
@@ -637,6 +637,8 @@ def send(request, id):
     return render(request=request, template_name="card.html", context={'form': mydata})
 
 
+@never_cache
+@login_required
 def sendmail(request, id):
 
     mydata = CardData.objects.get(id=id)
@@ -751,6 +753,8 @@ def sendmailqr(request, id):
     return render(request=request, template_name="homepage.html", context={'form': mydataa})
 
 
+@never_cache
+@login_required
 def qrcard(request, id):
     if request.method == "GET":
         mydata = CardData.objects.get(id=id)
@@ -763,9 +767,9 @@ def qrcard(request, id):
         vcard.add('tel')
         vcard.tel.value = mydata.phone
 
-        with open(mydata.upload.path, 'rb') as img:
-
-            image_data = base64.b64encode(img.read()).decode()
+        with open(os.path.join(mydata.upload.path), 'rb') as img:
+             image_data = base64.b64encode(img.read()).decode()
+           
         vcard.add('PHOTO;ENCODING=b').value = image_data
         response = HttpResponse(vcard.serialize(), content_type='text/vcard')
         response['Content-Disposition'] = 'attachment; filename=' + \
@@ -773,6 +777,8 @@ def qrcard(request, id):
     return render(request=request, template_name="qr_card.html", context={'mydata': mydata})
 
 
+@never_cache
+@login_required
 def qr_card(request, id):
     if request.method == "GET":
         mydata = CardData.objects.get(id=id)
@@ -810,6 +816,7 @@ def handler500(request):
 
 
 @login_required
+@never_cache
 def change_password_view(request):
     if request.method == 'POST':
         new_password1 = request.POST['password1']
@@ -826,3 +833,24 @@ def change_password_view(request):
             return redirect('/setting')
 
     return render(request, 'setting.html')
+
+
+def resend_activation(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            messages.error(request, 'No user found with that email address.')
+            return redirect('main:register')
+
+        if user.is_active:
+            messages.error(request, 'This user account is already active.')
+            return redirect('main:login')
+
+        activateEmail(request, user, email)
+        messages.success(request, f'A new activation link has been sent to {email}. Please check your inbox and spam folder.')
+        return redirect('main:login')
+
+    return render(request, 'register.html')

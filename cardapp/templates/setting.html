@@ -112,16 +112,24 @@
         <input type="checkbox" name="chkTogleMenu" id="chkTogleMenu">
         <section class="sidebar">
             <ul>
-              <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/logo_icon.svg' %}" alt="logo"></a> </li>
-              <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/card_icon.svg' %}" alt="card_icon"> Cards</a></li>
-              <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/contact_icon.svg' %}" alt="contact_icon"> Contacts</a></li>
-              <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/background_icon.svg' %}" alt="background_icon"> Backgrounds</a></li>
-              <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/email_icon.svg' %}" alt="email_icon"> Email Signatures</a></li>
-              <li><a href="/setting" class="decor-sidebar"><img src="{% static 'images/setting_icon.svg' %}" alt="setting_icon"> Setting</a></li>
-              <li><label for="chkTogleMenu"><img src="{% static 'images/toggle.svg' %}" alt="setting_icon" style="filter: invert(1);"> Toggle Menu</label></li>
-              <li class="logout-sidebar" ><a href="/logout" class="decor-sidebar"><img src="{% static 'images/logout_icon.svg' %}" alt="logout"> Logout</a></li>
+                <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/logo_icon.svg' %}"
+                            alt="logo"></a> </li>
+                <li><a href="/homepage" class="decor-sidebar"><img src="{% static 'images/card_icon.svg' %}"
+                            alt="card_icon"> Cards</a></li>
+                <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/contact_icon.svg' %}"
+                            alt="contact_icon"> Contacts</a></li>
+                <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/background_icon.svg' %}"
+                            alt="background_icon"> Backgrounds</a></li>
+                <li><a href="/#" class="decor-sidebar"><img src="{% static 'images/email_icon.svg' %}" alt="email_icon">
+                        Email Signatures</a></li>
+                <li><a href="/setting" class="decor-sidebar"><img src="{% static 'images/setting_icon.svg' %}"
+                            alt="setting_icon"> Setting</a></li>
+                <li><label for="chkTogleMenu"><img src="{% static 'images/toggle.svg' %}" alt="setting_icon"
+                            style="filter: invert(1);"> Toggle Menu</label></li>
+                <li class="logout-sidebar" data-bs-toggle="modal" data-bs-target="#logoutModal"><img
+                        src="{% static 'images/logout_icon.svg' %}" alt="logout"> Logout</li>
             </ul>
-           
+
         </section>
         <section class="content">
             <nav>
@@ -132,16 +140,14 @@
                 <div class="row form-container">
                     <div class="col-md-12 ">
                         <ul class="setting">
-                            <li data-bs-toggle="modal"
-                            data-bs-target="#passwordModal">
+                            <li data-bs-toggle="modal" data-bs-target="#passwordModal">
                                 <img src="{% static 'images/password_change_setting.svg' %}" alt="password change">
                                 <span>Change your Password</span>
                             </li>
-                            <li  data-bs-toggle="modal"
-                            data-bs-target="#deleteModal">
-                                    <img src="{% static 'images/delete_setting.svg' %}" alt="Delete">
-                                    <span> Delete your
-                                        Account</span>
+                            <li data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <img src="{% static 'images/delete_setting.svg' %}" alt="Delete">
+                                <span> Delete your
+                                    Account</span>
                             </li>
                         </ul>
                     </div>
@@ -157,7 +163,8 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <h2>Are you sure you want to Delete your Account?</h2>
-                    <a href="{% url 'main:delete_account' %}"><button type="button" class="btn btn-save">Yes,Delete</button></a>
+                    <a href="{% url 'main:delete_account' %}"><button type="button"
+                            class="btn btn-save">Yes,Delete</button></a>
                     <button type="button" class="btn btn-clear" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -177,34 +184,46 @@
                                 <div class="login-modal">
                                     <h2 class="login-h2">Set New Password</h2>
                                     <img src="{% static 'images/line.svg' %}" class="rect-line" alt="rect-line">
-                                        <div class="position-relative mt-2">
-                                            <input type="password" id="password1" name="password1" placeholder="New Password"
-                                                maxlength="32" class="textbox">
-                                            <img src="{% static 'images/password_open.svg' %}" id="password-img" alt="password"
-                                                class="img-div position-absolute"
-                                                onclick="passwordToggle(this.id, 'password1')">
-                                        </div>
-                                        <div class="position-relative">
-                                            <input type="password" id="password2" name="password2" placeholder="Confirm Password"
-                                                maxlength="32" class="textbox">
-                                            <img src="{% static 'images/password_open.svg' %}" id="password-img1" alt="password"
-                                                class="img-div position-absolute"
-                                                onclick="passwordToggle(this.id, 'password2')">
-                                        </div>
-                                        <button type="submit" class="btn btn-save mt-2">Change Password</button>
-    
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                                    <div class="position-relative mt-2">
+                                        <input type="password" id="password1" name="password1"
+                                            placeholder="New Password" maxlength="32" class="textbox">
+                                        <img src="{% static 'images/password_open.svg' %}" id="password-img"
+                                            alt="password" class="img-div position-absolute"
+                                            onclick="passwordToggle(this.id, 'password1')">
+                                    </div>
+                                    <div class="position-relative">
+                                        <input type="password" id="password2" name="password2"
+                                            placeholder="Confirm Password" maxlength="32" class="textbox">
+                                        <img src="{% static 'images/password_open.svg' %}" id="password-img1"
+                                            alt="password" class="img-div position-absolute"
+                                            onclick="passwordToggle(this.id, 'password2')">
+                                    </div>
+                                    <button type="submit" class="btn btn-save mt-2">Change Password</button>
+
                     </form>
                 </div>
             </div>
         </div>
+        </form>
+    </div>
+    </div>
+    </div>
     </div>
 
 
-
+    <!-- Logout Modal -->
+    <div class="modal fade" id="logoutModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h2>Are you sure you want to Logout your Account?</h2>
+                    <a href="{% url 'main:logout' %}"><button type="button" class="btn btn-save">Logout</button></a>
+                    <button type="button" class="btn btn-clear" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
