@@ -206,7 +206,14 @@ def login_request(request):
         password = request.POST['password']
         remember_me = request.POST.get('remember_me')
 
+        user = User.objects.filter(username=username).first()
+
+        if user is not None and not user.is_active:
+            messages.error(request, "Your account is not activated. Please activate your account from your email.")
+            return redirect("main:form")
+
         user = authenticate(request, username=username, password=password)
+
         if user is not None and user.is_active:
             login(request, user)
             if not remember_me:
@@ -219,14 +226,11 @@ def login_request(request):
             mp.track(request.user.id, 'Login')
             messages.success(request, f"You are now logged in as {username}.")
             return redirect("main:form")
-        elif user is None:
-            messages.error(request, "Invalid username or password.")
         else:
-            messages.error(
-                request, "Your account is not activated. Please activate your account from your email.")
-            return redirect("main:form")
+            messages.error(request, "Invalid username or password.")
 
     return render(request=request, template_name="login.html")
+
 
 @never_cache
 def logout_request(request):
