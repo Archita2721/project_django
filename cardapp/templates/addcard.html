@@ -1,155 +1,5 @@
 {% load static %}
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300&family=Poppins:wght@300&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <title>Quickshare | Add Card</title>
-</head>
-<body>
-  <div class="parent">
-    <div class="menu">
-      <div style="margin: 5px 0px 30px 5px; width: 200px;" >
-        <a href="/" style="text-decoration: none; color: #fff;"><img src="{% static 'images/Group 37.svg' %}" alt="logo" > <label style="color: #fff; font-size: 18px; font-family: 'poppins'; position: relative; top: -7px">Quick Share</label></a>
-      </div>
-     <ul>
-      <li> <img src="{% static 'images/Vector (2).svg' %}" alt=""><label><a href="/" style="text-decoration: none; color: #fff;">Cards</a></label> </li>
-      <li> <img src="{% static 'images/Group (1).svg' %}" alt="" ><label>Contact</label> </li>
-      <li> <img src="{% static 'images/Vector (3).svg' %}" alt="" ><label>Background</label> </li>
-      <li> <img src="{% static 'images/Vector (4).svg' %}" alt="" ><label>Email Signature</label> </li>
-      <li> <img src="{% static 'images/Vector (5).svg' %}" alt="" ><label> <a href="/setting" style="text-decoration: none; color: #fff;">Settings</a></label> </li>
-      </ul>    
-      <div class="icons-bottom" >
-        <img src="{% static 'images/Group 47.svg' %}" alt="" class="logout-image"><label class="logout-text"><a href="/logout" style="text-decoration: none; color: #fff;">Log Out</a></label>
-      </div>
-  </div>
-    <div class="nav">
-      <a href="javascript:history.back()">
-      <img src="{% static 'images/Vector (7).svg' %}" alt="" class="arrow"></a>
-      <span>Your cards/Add new</span> 
-      {% include 'messages.html' %}
-    </div>
-    <div class="nav-side">
-      <div class="nav-side-div">
-        <label for="" style="font-size: 20px;">{{user.username}}</label> <br>
-        
-      </div>
-      
-    </div>
-    <div class="main">
-      <form method="POST" enctype="multipart/form-data" class="back-container" style="overflow: hidden;">
-        {% csrf_token %}
-      
-        <div class="input-container" style="height: 100%; background: #D4E9FA;padding: 0;clip-path: polygon(0% 0%, 50% 0%, 71% 50%, 50% 100%, 0% 100%);">
 
-          commented
-         {% if card_data.upload %}
-            <img style ="height: 100%;
-              width: 67%;" src="{{card_data.upload.url}}" alt="">
-          {% else %}
-            <label for="upload" class="add-image" >
-              <img src="{% static 'images/add_img.svg' %}" alt="">
-              <span>Add Image</span>
-            </label> 
-          {% endif %} 
-          end commented
-
-          <label for="upload" style="cursor: pointer;">
-            <div class="add-img-container">
-              {% if card_data.upload %}
-                <img src="{{ card_data.upload.url }}" alt="" class="add-img" id="add-img">
-              {% else%}
-                <img src="{% static 'images/sample.png' %}" alt="" class="add-img-icon" id="add-img-icon">
-              {% endif %}
-            </div>
-          </label>
-          <input type="file" name="upload" id="upload" style="display: none" {% if card_data %} onchange="changeImg(this, 'update')" {% else %} onchange="changeImg(this, 'add')" {% endif %} >
-
-        </div>
-        <div class="input-container ">
-          <div>
-            <input type="text"  id="cardname" placeholder="Card Name" name="cardname" value="{{card_data.cardname}}">
-            <img src="{% static 'images/card_vector.svg' %}" style="position: absolute;left: 59%; top: 22%;">
-          </div>
-          <div>
-            <input type="text" id="department" placeholder="Title" name="department" value="{{card_data.department}}">
-            <img src="{% static 'images/Vector (10).svg' %}" style="position: absolute;left: 59%; top: 40%;">
-          </div>
-          <div>
-            <input type="number" id="phone" placeholder="Phone" name="phone" value="{{card_data.phone}}">
-            <img src="{% static 'images/Vector (11).svg' %}" style="position: absolute;left: 59%; top: 57%;">
-          </div>
-         <div>
-          <input type="email" id="email" placeholder="Email" name="email" value="{{card_data.email}}">
-          <img src="{% static 'images/Group 29.svg' %}" style="position: absolute;left: 59%; top: 74%;">
-         </div>
-        </div>
-        <div class="input-container ">
-          
-         <div>
-          <input type="text"  id="fullname" placeholder="Full name" name="fullname" value="{{card_data.fullname}}">
-          <img src="{% static 'images/Vector (9).svg' %}" style="position: absolute;left: 92%; top: 22%;">
-         </div>
-          <div>
-            <input type="text" id="company" placeholder="Company" name="company" value="{{card_data.company}}">
-          <img src="{% static 'images/Vector (Stroke).svg' %}" style="position: absolute;left: 92%; top: 40%;">
-          </div>
-          <div>
-            <input type="number" id="alternatephone" placeholder="Alternate Phone" name="alternatephone" value="{{card_data.alternatephone}}">
-          <img src="{% static 'images/Vector (11).svg' %}" style="position: absolute;left: 92%; top: 57%;">
-          </div>
-          <div>
-            <button class="btn-save" type="submit" value="Save">Save</button>
-            <button class="btn-clear" type="reset" value="Clear">Clear</button>
-        
-          
-          </div>
-        </div>
-      </form>
-      
-    </div>
-  </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-  <script>
-    $(document).ready(function(){
-    setTimeout(function() {
-      $('.alert').fadeOut('slow');
-    }, 5000); 
-  });
-
-  function changeImg(input,option){
-    let image=null;
-    if (option == "update"){
-      image = document.querySelector('#add-img');
-    }
-    else{
-      image = document.querySelector('#add-img-icon');
-    }
-
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-
-      reader.onload = function(e) {
-        image.src = e.target.result;
-      };
-
-      reader.readAsDataURL(input.files[0]);
-    }
-    image.classList.remove("add-img-icon")
-    image.classList.add("add-img")
-  }
-  </script>
-  
-</body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -193,13 +43,14 @@
       </ul>
     </section>
     <section class="content">
-      <nav>
+      <nav style="text-align: right; display: flex; justify-content: space-between;">
         <div class="menu-icon">
           <label for="chkTogleMenu">
             <img src="{% static 'images/menu.svg' %} " alt="">
           </label>
         </div>
-        <label>Archita THE GREAT</label>
+        <label style="margin-left: 30px;">Add Card</label>
+        <label>{{user.username}}</label>
       </nav>
       <label class="notify">{% include 'messages.html' %}</label>
       <form method="POST" enctype="multipart/form-data">

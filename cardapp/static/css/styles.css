@@ -588,7 +588,7 @@
 
  .menu-icon {
      width: 20px;
-     display: inline-block;
+     position: absolute;
  }
 
  .menu-icon img {

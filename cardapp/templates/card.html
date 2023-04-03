@@ -188,13 +188,22 @@
 
         </section>
         <section class="content">
-            <nav>
+            <!-- <nav style="text-align: right;">
                 <div class="menu-icon">
                     <label for="chkTogleMenu">
                         <img src="{% static 'images/menu.svg' %}" alt="">
                     </label>
                 </div>
-                <label>Archita THE GREAT</label>
+                <ul>{{user.username}}</ul>
+            </nav> -->
+            <nav style="text-align: right; display: flex; justify-content: space-between;">
+                <div class="menu-icon">
+                    <label for="chkTogleMenu">
+                        <img src="{% static 'images/menu.svg' %} " alt="">
+                    </label>
+                </div>
+                <label style="margin-left: 30px;">Your Cards</label>
+                <label>{{user.username}}</label>
             </nav>
             <label class="notify">{% include 'messages.html' %}</label>
             <div class="container-fluid p-3">

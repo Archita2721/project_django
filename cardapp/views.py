@@ -837,7 +837,6 @@ def sendmailqr(request, id):
 
 
 @never_cache
-@login_required
 def qrcard(request, id):
     if request.method == "GET":
         mydata = CardData.objects.get(id=id)
@@ -864,7 +863,6 @@ def qrcard(request, id):
 
 
 @never_cache
-@login_required
 def qr_card(request, id):
     if request.method == "GET":
         mydata = CardData.objects.get(id=id)
