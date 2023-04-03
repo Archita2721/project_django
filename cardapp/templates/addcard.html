@@ -207,7 +207,7 @@
         <div class="container-fluid p-3">
           <div class="row form-container">
             <div class="col-md-3 parent">
-              <div class="box" style="background-image: url({{bgimage}});background-size: cover;
+              <!-- <div class="box" style="background-image: url();background-size: cover;
               background-position: center;">
                 <label for="upload">
                   {% if card_data.upload %}
@@ -218,7 +218,19 @@
                 width: 100%;">
                   {% endif %}
                 </label>
+              </div> -->
+              <div class="box" style="background-size: cover; background-position: center;">
+                <label for="upload">
+                  {% if card_data.upload %}
+                    <img src="{{ card_data.upload.url }}" alt="" class="add-img" id="add-img" style="position: relative; width: 100%;">
+                  {% else %}
+                    <img src="{% static 'images/sample.png' %}" alt="" class="add-img-icon" id="add-img-icon" style="position: relative; width: 100%;">
+                  {% endif %}
+                </label>
               </div>
+              
+              <input type="file" name="upload" id="upload" style="display: none" {% if card_data %}
+                onchange="changeImg(this, 'update')" {% else %} onchange="changeImg(this, 'add')" {% endif %}>
             </div>
 
             <div class="col-md-3 parent2" style="padding: 0;">

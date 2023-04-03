@@ -316,9 +316,8 @@ def homepage(request):
 @login_required
 @never_cache
 def addcard(request):
-    mp.track(request.user.id, 'Viewed Add card Page')
     if request.method == 'POST':
-        # Handle the POST request
+    # Handle the POST request
         fullname = request.POST.get('fullname')
         cardname = request.POST.get('cardname')
         department = request.POST.get('department')
@@ -349,33 +348,103 @@ def addcard(request):
                 except ValidationError as e:
                     messages.error(request, e.message_dict)
                 else:
-                    # Save the uploaded file to a temporary file
-                    with NamedTemporaryFile(delete=False) as temp_file:
-                        for chunk in upload.chunks():
-                            temp_file.write(chunk)
-                    temp_file_path = temp_file.name
+                    if upload:
+                        # Save the uploaded file to a temporary file
+                        with NamedTemporaryFile(delete=False) as temp_file:
+                            for chunk in upload.chunks():
+                                temp_file.write(chunk)
+                        temp_file_path = temp_file.name
 
-                    # Upload the file to S3
-                    folder_name = 'uploads'
-                    s3_path = f'{folder_name}/{upload.name}'
-                    try:
-                        s3.upload_file(temp_file_path, 'quickshare-bucket', s3_path)
-                    except NoCredentialsError:
-                        messages.error(request, 'Credentials not available')
-                    else:
-                        print(f"File uploaded to S3: {upload.name}")
-                        my_model_instance.upload = upload
-                        my_model_instance.upload_url = f'https://quickshare-bucket.s3.amazonaws.com/{s3_path}'
-                        my_model_instance.save()
+                        # Upload the file to S3
+                        folder_name = 'uploads'
+                        s3_path = f'{folder_name}/{upload.name}'
+                        try:
+                            s3.upload_file(temp_file_path, 'quickshare-bucket', s3_path)
+                        except NoCredentialsError:
+                            messages.error(request, 'Credentials not available')
+                        else:
+                            print(f"File uploaded to S3: {upload.name}")
+                            my_model_instance.upload = upload
+                            my_model_instance.upload_url = f'https://quickshare-bucket.s3.amazonaws.com/{s3_path}'
 
-                        # Delete the temporary file
-                        os.unlink(temp_file_path)
+                            # Delete the temporary file
+                            os.unlink(temp_file_path)
 
-                        messages.success(request, 'Saved Successfully!')
-                        return redirect("main:form")
-        return redirect("main:addcard")
-    else:
-        return render(request, 'addcard.html')
+                    my_model_instance.save()
+                    messages.success(request, 'Saved Successfully!')
+                    mp.track(request.user.id, 'Card Added', {
+                        'Full Name': fullname,
+                        'Card Name': cardname,
+                        'Department': department,
+                        'Company': company,
+                        'Phone': phone,
+                        'Email': email
+                    })
+
+                    return redirect("main:form")
+    return render(request, 'addcard.html')
+
+# def addcard(request):
+#     mp.track(request.user.id, 'Viewed Add card Page')
+#     if request.method == 'POST':
+#         # Handle the POST request
+#         fullname = request.POST.get('fullname')
+#         cardname = request.POST.get('cardname')
+#         department = request.POST.get('department')
+#         company = request.POST.get('company')
+#         phone = request.POST.get('phone')
+#         alternatephone = request.POST.get('alternatephone')
+#         email = request.POST.get('email')
+#         upload = request.FILES.get('upload')
+
+#         my_model_instance = CardData()
+#         my_model_instance.fullname = fullname
+#         my_model_instance.cardname = cardname
+#         my_model_instance.department = department
+#         my_model_instance.company = company
+#         my_model_instance.phone = phone
+#         my_model_instance.alternatephone = alternatephone
+#         my_model_instance.email = email
+
+#         if not fullname or not email or not cardname or not department or not company or not phone or not email:
+#             messages.error(request, 'Please enter all details!')
+#         else:
+#             # Check if phone number already exists
+#             if CardData.objects.filter(phone=phone).exists():
+#                 messages.error(request, 'Phone number already exists!')
+#             else:
+#                 try:
+#                     my_model_instance.full_clean()
+#                 except ValidationError as e:
+#                     messages.error(request, e.message_dict)
+#                 else:
+#                     # Save the uploaded file to a temporary file
+#                     with NamedTemporaryFile(delete=False) as temp_file:
+#                         for chunk in upload.chunks():
+#                             temp_file.write(chunk)
+#                     temp_file_path = temp_file.name
+
+#                     # Upload the file to S3
+#                     folder_name = 'uploads'
+#                     s3_path = f'{folder_name}/{upload.name}'
+#                     try:
+#                         s3.upload_file(temp_file_path, 'quickshare-bucket', s3_path)
+#                     except NoCredentialsError:
+#                         messages.error(request, 'Credentials not available')
+#                     else:
+#                         print(f"File uploaded to S3: {upload.name}")
+#                         my_model_instance.upload = upload
+#                         my_model_instance.upload_url = f'https://quickshare-bucket.s3.amazonaws.com/{s3_path}'
+#                         my_model_instance.save()
+
+#                         # Delete the temporary file
+#                         os.unlink(temp_file_path)
+
+#                         messages.success(request, 'Saved Successfully!')
+#                         return redirect("main:form")
+#         return redirect("main:addcard")
+#     else:
+#         return render(request, 'addcard.html')
 
 
 
@@ -412,7 +481,7 @@ def qrcard(request, id):
 @login_required
 @never_cache
 def update(request, id):
-    mp.track(request.user.id, 'Viewed Add card Page')
+    mp.track(request.user.id, 'Update Card Page')
     # Get the existing CardData instance by id
     card_data = CardData.objects.get(id=id)
     print(card_data)
@@ -497,6 +566,9 @@ def delete(request, id):
     #         os.remove(path)
 
     mydata.delete()
+    mp.track(request.user.id, 'Card Deleted', {
+        'card_id': id
+    })
 
     return redirect('main:form')
 
@@ -514,6 +586,10 @@ def delete_account(request):
             CardData.objects.filter(email=request.user.email).delete()
 
         user.delete()
+        mp.people_set(username, {
+            '$username': username,
+            'Account Status': 'Deleted'
+        })
         messages.success(
             request, f"Your account ({username}) has been deleted.")
         logout(request)
@@ -781,6 +857,9 @@ def qrcard(request, id):
         response = HttpResponse(vcard.serialize(), content_type='text/vcard')
         response['Content-Disposition'] = 'attachment; filename=' + \
             mydata.fullname + '.vcf'
+        mp.track(request.user.id, 'QR Code Scanned', {
+            'card_id': id,
+        })
     return render(request=request, template_name="qr_card.html", context={'mydata': mydata})
 
 
@@ -805,12 +884,17 @@ def qr_card(request, id):
         response = HttpResponse(vcard.serialize(), content_type='text/vcard')
         response['Content-Disposition'] = 'attachment; filename=' + \
             mydata.fullname + '.vcf'
+        mp.track(request.user.id, 'QR Code Downloaded', {
+            'card_id': id,
+            'download_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        })
     return response
 
 
 @login_required
 @never_cache
 def setting(request):
+    mp.track(request.user.id, 'Settings Page')
     return render(request=request, template_name="setting.html")
 
 
@@ -843,7 +927,6 @@ def change_password_view(request):
 
 
 def resend_activation(request):
-    print("inside here")
     if request.method == 'POST':
         email = request.POST.get('email')
         user = User.objects.filter(email=email).first()
@@ -851,10 +934,8 @@ def resend_activation(request):
         if user:
             if not user.is_active:
                 activateEmail(request, user, email)
-                print("inside here2")
                 return redirect('main:login')
             else:
-                print("inside here3")
                 messages.error(request, 'Your account has already been activated.')
         else:
             messages.error(request, 'User with this email does not exist.')

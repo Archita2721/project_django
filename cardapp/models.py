@@ -22,7 +22,7 @@ class CardData(models.Model):
     cardname =models.CharField(max_length=100,blank=True)
     #qr_code = models.ImageField(upload_to='qr_codes', null=True,blank=True)
     qr_code = models.URLField(blank=True, null=True)
-    alternatephone= models.CharField(null=True,  max_length=11,blank=True,unique=True,)
+    alternatephone= models.CharField(null=True,  max_length=11,blank=True)
    
 
     # def generate_qr_code(self):
