@@ -517,7 +517,7 @@ def delete_account(request):
 
     return render(request, 'setting.html')
 
-
+@never_cache
 def password_reset_request(request):
     if request.method == "GET": 
         password_reset_form = PasswordResetForm(request.GET)
@@ -554,7 +554,7 @@ def password_reset_request(request):
         password_reset_form = PasswordResetForm()
         return render(request=request, template_name="password/password_reset.html", context={"password_reset_form": password_reset_form})
 
-
+@never_cache
 def password_reset_confirm(request, uidb64, token):
     UserModel = get_user_model()
     try:
@@ -638,65 +638,6 @@ def send(request, id):
 
     return render(request=request, template_name="card.html", context={'form': mydata})
 
-
-# @never_cache
-# @login_required
-# def sendmail(request, id):
-
-#     mydata = CardData.objects.get(id=id)
-#     if request.method == "POST":
-#         email = request.POST.get('email')
-#         message = request.POST.get('message')
-#         fullname = request.POST.get('name')
-
-#         vcard = vCard()
-#         vcard.add('fn')
-#         vcard.fn.value = mydata.fullname
-#         vcard.add('ph').value = mydata.phone
-#         vcard.add('email')
-#         vcard.email.value = mydata.email
-#         vcard.add('tel')
-#         vcard.tel.value = mydata.phone
-
-#         with open(mydata.upload.path, 'rb') as img:
-#             print(img)
-#             image_data = base64.b64encode(img.read()).decode()
-#         vcard.add('PHOTO;ENCODING=b').value = image_data
-#         # vcard.add('photo').value = image_data
-
-#         vcard_string = vcard.serialize()
-
-#         html_content = render_to_string(
-#             'template_card.html',  {'data': mydata})
-#         email_content = '{}\n\n{}'.format(message, html_content)
-#         msg = EmailMultiAlternatives(
-#             'Card',
-#             email_content,
-#             'architashah27@gmail.com',
-#             [email],
-#             headers={'Content-Type': 'text/html'},
-#         )
-
-#         image = MIMEImage(mydata.upload.read())
-#         image.add_header('Content-ID', '<{}>'.format(mydata.upload))
-#         msg.attach(image)
-#         msg.content_subtype = "html"
-
-#         msg.attach(mydata.fullname+'.vcf', vcard_string, 'text/vcard')
-
-#         msg.send()
-#         mp.track(request.user.id, 'Sent Email', {
-#             'recipient': email,
-#             'subject': 'Card',
-#             'date': datetime.now()
-#         })
-#         print(request.user.id)
-#         messages.success(request, "Please Check your mailbox.")
-#         return redirect('main:form')
-#     else:
-#         messages.error(request, "Something went wrong")
-
-#     return render(request=request, template_name="homepage.html", context={'form': mydata})
 
 @never_cache
 @login_required
@@ -898,21 +839,20 @@ def change_password_view(request):
 
 
 def resend_activation(request):
+    print("inside here")
     if request.method == 'POST':
         email = request.POST.get('email')
+        user = User.objects.filter(email=email).first()
 
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            messages.error(request, 'No user found with that email address.')
-            return redirect('main:register')
+        if user:
+            if not user.is_active:
+                activateEmail(request, user, email)
+                print("inside here2")
+                return redirect('main:login')
+            else:
+                print("inside here3")
+                messages.error(request, 'Your account has already been activated.')
+        else:
+            messages.error(request, 'User with this email does not exist.')
 
-        if user.is_active:
-            messages.error(request, 'This user account is already active.')
-            return redirect('main:login')
-
-        activateEmail(request, user, email)
-        messages.success(request, f'A new activation link has been sent to {email}. Please check your inbox and spam folder.')
-        return redirect('main:login')
-
-    return render(request, 'register.html')
+    return render(request, 'resend_activation.html')

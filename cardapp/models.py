@@ -18,11 +18,11 @@ class CardData(models.Model):
     company=models.CharField(blank=True,max_length=100)
     phone = models.CharField(null=False, blank=False, unique=True,max_length=11)
     upload = models.FileField(blank=True,upload_to ='uploads',null=True)
-    email=models.EmailField(blank=True,max_length = 254)
+    email=models.EmailField(blank=False,max_length = 254,null=False)
     cardname =models.CharField(max_length=100,blank=True)
     #qr_code = models.ImageField(upload_to='qr_codes', null=True,blank=True)
     qr_code = models.URLField(blank=True, null=True)
-    alternatephone= models.CharField(null=True,  max_length=11,blank=True)
+    alternatephone= models.CharField(null=True,  max_length=11,blank=True,unique=True,)
    
 
     # def generate_qr_code(self):

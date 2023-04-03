@@ -78,6 +78,7 @@
 
 <body>
     <section>
+        <label class="notify">{% include 'messages.html' %}</label>
         <div class="container parent">
             <div class="formdiv">
                 <div class="transparent-bg">
@@ -87,39 +88,21 @@
                             <img src="{% static 'images/logo_1.svg' %}" alt="logo" class="logo d-block d-md-none">
                         </div>
                         <div class="col-12 col-md-6 position-relative ">
-                            <div class="pass">
-                                <h2 class="login-h2">Forgot Your Password?</h2>
+                            <div class="pass" style="top: -66px; ">
+                                <h2 class="login-h2">Resend activation link</h2>
                                 <img src="{% static 'images/line.svg' %}" class="rect-line" alt="rect-line">
-                                <form method="GET">
-
+                                <form method="POST">
+                                    {% csrf_token %}
                                     <div class="position-relative">
                                         <input type="email" id="email" name="email"
                                             placeholder="Registered Email Address" maxlength="32" class="textbox">
-                                        <img src="{% static 'images/email.svg' %}" alt="username"
-                                            class="img-div position-absolute">
+                                        <img src="{% static 'images/email.svg' %}" alt="username" class="img-div position-absolute">
                                     </div>
                                     <button type="submit" class="btn-submit">
                                         <span class="spinner-border spinner-border-sm d-none" role="status"
-                                            aria-hidden="true"></span>
-                                        Send Mail</button>
-                                    <p class="sub-p">Check your Mail, The Reset Password link has been sent to your
-                                        Registered Mail.If you didn’t get an email?</p>
-                                    <div class="d-flex justify-content-between for-rem">
-
-                                        <div class="style-label">
-                                            <label for="login"> <a href="/login" class="decor"> <img
-                                                        src="{% static 'images/back.svg' %}" alt="back to login"> Back
-                                                    to Login</a></label>
-                                        </div>
-                                        <div class="ml-auto ">
-                                            <label for="resend_mail" id="reset-link"> <a
-                                                    href="{% url 'main:password_reset' %}" class="resend"> Resend
-                                                    Mail </a></label>
-
-
-                                        </div>
-                                    </div>
-
+                                        aria-hidden="true"></span>
+                                        Send Link</button>
+                                    
                                 </form>
                             </div>
                         </div>
@@ -140,41 +123,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
 <script>
-    const resetLink = document.querySelector('#reset-link');
-    const resendLink = document.querySelector('#resend-link');
-    let timer = null;
-    let remainingTime = 0;
-
-    function startTimer() {
-        resetLink.disabled = true;
-        remainingTime = 60;
-        timer = setInterval(updateTimer, 1000);
-    }
-
-    function updateTimer() {
-        remainingTime--;
-        if (remainingTime <= 0) {
-            clearInterval(timer);
-            resetLink.disabled = false;
-            resetLink.innerText = 'Send Mail';
-        } else {
-            resetLink.innerText = `Send Mail (${remainingTime}s)`;
-        }
-    }
-
-    resetLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        startTimer();
-        updateTimer();
-    });
-
-    resendLink.addEventListener('click', function (event) {
-        event.preventDefault();
-        startTimer();
-        updateTimer();
-    });
-</script>
-<script>
     $(document).ready(function () {
         $('form').submit(function () {
             $('.spinner-border').removeClass('d-none');
@@ -182,5 +130,4 @@
         });
     });
 </script>
-
 </html>
