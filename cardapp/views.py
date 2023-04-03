@@ -1,4 +1,6 @@
 import io
+from pathlib import Path
+from django.core.files.storage import default_storage
 import qrcode
 from datetime import datetime
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -9,7 +11,7 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import login
 from django.contrib import messages
-from project_django.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+from project_django.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, BASE_DIR
 from .forms import NewUserForm
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.forms import AuthenticationForm
@@ -637,10 +639,68 @@ def send(request, id):
     return render(request=request, template_name="card.html", context={'form': mydata})
 
 
+# @never_cache
+# @login_required
+# def sendmail(request, id):
+
+#     mydata = CardData.objects.get(id=id)
+#     if request.method == "POST":
+#         email = request.POST.get('email')
+#         message = request.POST.get('message')
+#         fullname = request.POST.get('name')
+
+#         vcard = vCard()
+#         vcard.add('fn')
+#         vcard.fn.value = mydata.fullname
+#         vcard.add('ph').value = mydata.phone
+#         vcard.add('email')
+#         vcard.email.value = mydata.email
+#         vcard.add('tel')
+#         vcard.tel.value = mydata.phone
+
+#         with open(mydata.upload.path, 'rb') as img:
+#             print(img)
+#             image_data = base64.b64encode(img.read()).decode()
+#         vcard.add('PHOTO;ENCODING=b').value = image_data
+#         # vcard.add('photo').value = image_data
+
+#         vcard_string = vcard.serialize()
+
+#         html_content = render_to_string(
+#             'template_card.html',  {'data': mydata})
+#         email_content = '{}\n\n{}'.format(message, html_content)
+#         msg = EmailMultiAlternatives(
+#             'Card',
+#             email_content,
+#             'architashah27@gmail.com',
+#             [email],
+#             headers={'Content-Type': 'text/html'},
+#         )
+
+#         image = MIMEImage(mydata.upload.read())
+#         image.add_header('Content-ID', '<{}>'.format(mydata.upload))
+#         msg.attach(image)
+#         msg.content_subtype = "html"
+
+#         msg.attach(mydata.fullname+'.vcf', vcard_string, 'text/vcard')
+
+#         msg.send()
+#         mp.track(request.user.id, 'Sent Email', {
+#             'recipient': email,
+#             'subject': 'Card',
+#             'date': datetime.now()
+#         })
+#         print(request.user.id)
+#         messages.success(request, "Please Check your mailbox.")
+#         return redirect('main:form')
+#     else:
+#         messages.error(request, "Something went wrong")
+
+#     return render(request=request, template_name="homepage.html", context={'form': mydata})
+
 @never_cache
 @login_required
 def sendmail(request, id):
-
     mydata = CardData.objects.get(id=id)
     if request.method == "POST":
         email = request.POST.get('email')
@@ -656,11 +716,9 @@ def sendmail(request, id):
         vcard.add('tel')
         vcard.tel.value = mydata.phone
 
-        with open(mydata.upload.path, 'rb') as img:
-            print(img)
+        with mydata.upload.open('rb') as img:
             image_data = base64.b64encode(img.read()).decode()
         vcard.add('PHOTO;ENCODING=b').value = image_data
-        # vcard.add('photo').value = image_data
 
         vcard_string = vcard.serialize()
 
@@ -675,12 +733,17 @@ def sendmail(request, id):
             headers={'Content-Type': 'text/html'},
         )
 
-        image = MIMEImage(mydata.upload.read())
-        image.add_header('Content-ID', '<{}>'.format(mydata.upload))
-        msg.attach(image)
-        msg.content_subtype = "html"
+        with mydata.upload.open('rb') as img:
+            msg_img = MIMEImage(img.read())
+            msg_img.add_header('Content-ID', '<{}>'.format(mydata.upload))
+            msg.attach(msg_img)
 
+        msg.content_subtype = "html"
         msg.attach(mydata.fullname+'.vcf', vcard_string, 'text/vcard')
+        #msg.attach(mydata.upload.name, img.read(), 'image/png')
+        image_data = base64.b64decode(image_data)
+        msg.attach(mydata.upload.name, image_data, 'image/png')
+
 
         msg.send()
         mp.track(request.user.id, 'Sent Email', {
@@ -688,7 +751,6 @@ def sendmail(request, id):
             'subject': 'Card',
             'date': datetime.now()
         })
-        print(request.user.id)
         messages.success(request, "Please Check your mailbox.")
         return redirect('main:form')
     else:
@@ -767,9 +829,9 @@ def qrcard(request, id):
         vcard.add('tel')
         vcard.tel.value = mydata.phone
 
-        with open(os.path.join(mydata.upload.path), 'rb') as img:
-             image_data = base64.b64encode(img.read()).decode()
-           
+        with default_storage.open(mydata.upload.name, 'rb') as img:
+            image_data = base64.b64encode(img.read()).decode()
+
         vcard.add('PHOTO;ENCODING=b').value = image_data
         response = HttpResponse(vcard.serialize(), content_type='text/vcard')
         response['Content-Disposition'] = 'attachment; filename=' + \
@@ -791,9 +853,9 @@ def qr_card(request, id):
         vcard.add('tel')
         vcard.tel.value = mydata.phone
 
-        with open(mydata.upload.path, 'rb') as img:
+        with default_storage.open(mydata.upload.name, 'rb') as img:
+            image_data = base64.b64encode(img.read()).decode() 
 
-            image_data = base64.b64encode(img.read()).decode()
         vcard.add('PHOTO;ENCODING=b').value = image_data
         response = HttpResponse(vcard.serialize(), content_type='text/vcard')
         response['Content-Disposition'] = 'attachment; filename=' + \

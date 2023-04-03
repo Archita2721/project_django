@@ -312,7 +312,7 @@
 								<div class="modal-body">
 									<div class="qr-container d-block" id="email">
 										<h6>Email your personal card</h6>
-										<form class="email" method="POST" action="{% url 'main:send' x.id %}">
+										<form class="email" method="POST" action="{% url 'main:sendmail' x.id %}">
 											{% csrf_token %}
 											<div class="position-relative mb-1">
 												<input type="text" id="fullname" name="name" placeholder="Full name"

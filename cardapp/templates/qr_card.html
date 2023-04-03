@@ -65,46 +65,58 @@
     <title>Quickshare | Card</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
+
 <body>
+    <div class="qrcode-div">
+        <div class="info-card" id="info-card">
+            <div class="card-top">
+                <div class="box2">
+                    {% if mydata.upload %}
+                    <label for="upload"><img src={{mydata.upload.url}} alt="" style="width: 100%;"></label>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 card-info">
+                        <h2>{{mydata.fullname}}</h2>
+                        <p> <b>{{mydata.department}} at {{mydata.company}}</b> </p>
+                        <p><img src="{% static 'images/phone_card.svg' %}" alt="">{{mydata.phone}}</p>
+                        <p><img src="{% static 'images/email_card.svg' %}" alt="">{{mydata.email}}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center mb-2">
+                        <a href="{% url 'main:qr_card' mydata.id %}">
+                            <button type="button" class="btn btn-default btn-circle">
+                                <img src="{% static 'images/edit_icon.svg' %}" alt="">
+                                <span>Save</span>
+                            </button>
+                        </a>
+                        <button type="button" class="btn btn-default btn-circle" data-bs-toggle="modal"
+                            data-bs-target="">
+                            <img src="{% static 'images/delete_card_icon.svg' %}" alt="">
+                            <span>Send</span>
+                        </button>
 
-  <div class="info-card" id="info-card">
-    <div class="card-top">
-        <div class="box2">
-            {% if mydata.upload %}
-            <label for="upload"><img src={{mydata.upload.url}} alt="" style="width: 100%;"></label>
-            {% endif %}
-        </div>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-12 card-info">
-                <h2>{{mydata.fullname}}</h2>
-                <p> <b>{{mydata.department}} at {{mydata.company}}</b> </p>
-                <p><img src="{% static 'images/phone_card.svg' %}" alt="">{{mydata.phone}}</p>
-                <p><img src="{% static 'images/email_card.svg' %}" alt="">{{mydata.email}}</p>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12 text-center mb-2">
-                <a href="">
-                    <button type="button" class="btn btn-default btn-circle">
-                        <img src="{% static 'images/edit_icon.svg' %}" alt="">
-                        <span>Save</span>
-                    </button>
-                </a>
-                <button type="button" class="btn btn-default btn-circle" data-bs-toggle="modal"
-                data-bs-target="">
-                    <img src="{% static 'images/delete_card_icon.svg' %}" alt="">
-                    <span>Send</span>
-                </button>
-                
-            </div>
-        </div>
     </div>
-</div>
-
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg"
+    version="1.1">
+    <defs>
+        <filter id="goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+        </filter>
+    </defs>
+</svg>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
     crossorigin="anonymous"></script>
+
 </html>
