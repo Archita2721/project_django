@@ -1,5 +1,6 @@
 import io
 from pathlib import Path
+from django.core.files import File
 from django.core.files.storage import default_storage
 import qrcode
 from datetime import datetime
@@ -55,6 +56,7 @@ mp = Mixpanel("36cbd6f0b92d0588b757298c93c7a733")
 import boto3
 from botocore.exceptions import NoCredentialsError
 from tempfile import NamedTemporaryFile
+from django.utils.crypto import get_random_string
 from storages.backends.s3boto3 import S3Boto3Storage
 s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 
@@ -369,7 +371,14 @@ def addcard(request):
 
                             # Delete the temporary file
                             os.unlink(temp_file_path)
-
+                    else:
+                        # If no image is uploaded, use a default image
+                        default_image_path = os.path.join(settings.BASE_DIR, 'cardapp/static/images/sample.png')
+                        with open(default_image_path, 'rb') as f:
+                            default_image = File(f)
+                            default_image_name = 'sample.png'
+                            my_model_instance.upload.save(default_image_name, default_image, save=True)
+                            my_model_instance.upload_url = default_image_name
                     my_model_instance.save()
                     messages.success(request, 'Saved Successfully!')
                     mp.track(request.user.id, 'Card Added', {
@@ -597,7 +606,7 @@ def delete_account(request):
 
     return render(request, 'setting.html')
 
-@never_cache
+
 def password_reset_request(request):
     if request.method == "GET": 
         password_reset_form = PasswordResetForm(request.GET)
@@ -633,6 +642,8 @@ def password_reset_request(request):
             messages.error(request, 'An invalid email has been entered.')
         password_reset_form = PasswordResetForm()
         return render(request=request, template_name="password/password_reset.html", context={"password_reset_form": password_reset_form})
+    
+
 
 @never_cache
 def password_reset_confirm(request, uidb64, token):
@@ -680,11 +691,10 @@ def send(request, id):
         vcard.add('tel')
         vcard.tel.value = mydata.phone
 
-        with open(mydata.upload.path, 'rb') as img:
-            print(img)
+        with mydata.upload.open('rb') as img:
             image_data = base64.b64encode(img.read()).decode()
         vcard.add('PHOTO;ENCODING=b').value = image_data
-        # vcard.add('photo').value = image_data
+
         vcard_string = vcard.serialize()
 
         html_content = render_to_string(
@@ -697,12 +707,18 @@ def send(request, id):
             [email],
             headers={'Content-Type': 'text/html'},
         )
-        image = MIMEImage(mydata.upload.read())
-        image.add_header('Content-ID', '<{}>'.format(mydata.upload))
-        msg.attach(image)
-        msg.content_subtype = "html"
 
+        with mydata.upload.open('rb') as img:
+            msg_img = MIMEImage(img.read())
+            msg_img.add_header('Content-ID', '<{}>'.format(mydata.upload))
+            msg.attach(msg_img)
+
+        msg.content_subtype = "html"
         msg.attach(mydata.fullname+'.vcf', vcard_string, 'text/vcard')
+        #msg.attach(mydata.upload.name, img.read(), 'image/png')
+        image_data = base64.b64decode(image_data)
+        msg.attach(mydata.upload.name, image_data, 'image/png')
+
 
         msg.send()
         mp.track(request.user.id, 'Sent Email', {
@@ -710,13 +726,12 @@ def send(request, id):
             'subject': 'Card',
             'date': datetime.now()
         })
-        print(request.user.id)
         messages.success(request, "Please Check your mailbox.")
-        return redirect(reverse('main:card', args=[id]))
+        return redirect('main:form')
     else:
         messages.error(request, "Something went wrong")
 
-    return render(request=request, template_name="card.html", context={'form': mydata})
+    return render(request=request, template_name="homepage.html", context={'form': mydata})
 
 
 @never_cache
