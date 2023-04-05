@@ -249,13 +249,13 @@ def homepage(request):
 
         mydata = CardData.objects.filter(email=request.user.email)
 
-        # mydata = CardData.objects.all()
+       
         print(mydata)
         return render(request=request, template_name='homepage.html', context={'mydata': mydata})
     else:
         return redirect('main:login')
 
-
+ 
 # @login_required
 # @never_cache
 # def addcard(request):

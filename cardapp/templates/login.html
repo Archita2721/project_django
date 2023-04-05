@@ -164,6 +164,11 @@
                                             aria-hidden="true"></span>
                                         Login
                                     </button>
+                                    {% if request.method == 'POST' %}
+                                        {% if not user.profile.is_active %}
+                                            <p style="color: red;">Please check your email to activate your account. <br><a href="{% url 'main:resend_activation' %}">Resend activation link</a> </p>
+                                        {% endif %}
+                                    {% endif %}
 
                                 </form>
                             </div>
@@ -171,7 +176,7 @@
                         <div class="col-12 col-md-5 ele">
                             <h2>Don't Have An Account?</h2>
                             <p>If you don't have an account, then register with us.</p>
-                            <a href="/register"><input type="submit" value="Register your Account"></a>
+                            <a href="/register"><input type="submit" value="Register Your Account"></a>
                         </div>
                     </div>
                 </div>

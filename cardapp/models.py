@@ -7,6 +7,7 @@ from PIL import Image,ImageDraw
 import io
 from django.urls import reverse
 from django.core.files.base import ContentFile
+from django.contrib.auth.models import User
 
 # Create your models here.
 class CardData(models.Model):
@@ -23,7 +24,7 @@ class CardData(models.Model):
     #qr_code = models.ImageField(upload_to='qr_codes', null=True,blank=True)
     qr_code = models.URLField(blank=True, null=True)
     alternatephone= models.CharField(null=True,  max_length=11,blank=True)
-   
+    
 
     # def generate_qr_code(self):
     #     qr = qrcode.QRCode(version=1, box_size=10, border=5)
