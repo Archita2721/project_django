@@ -230,6 +230,9 @@ section {
     font-size: 14px;
     font-weight: 700;
     text-decoration: none;
+    background: transparent;
+    border: none;
+    outline: none;
 }
 .spinner-border {
     margin-right: 5px;
