@@ -230,7 +230,6 @@ def login_request(request):
             return redirect("main:form")
         else:
             messages.error(request, "Invalid username or password.")
-
     return render(request=request, template_name="login.html")
 
 
@@ -247,7 +246,7 @@ def homepage(request):
     mp.track(request.user.id, 'Viewed HomePage')
     if request.method == 'GET':
 
-        mydata = CardData.objects.filter(email=request.user.email)
+        mydata = CardData.objects.filter(username=request.user.username)
 
        
         print(mydata)
@@ -328,6 +327,7 @@ def addcard(request):
         alternatephone = request.POST.get('alternatephone')
         email = request.POST.get('email')
         upload = request.FILES.get('upload')
+        username = request.POST.get('username')
 
         my_model_instance = CardData()
         my_model_instance.fullname = fullname
@@ -337,6 +337,8 @@ def addcard(request):
         my_model_instance.phone = phone
         my_model_instance.alternatephone = alternatephone
         my_model_instance.email = email
+        my_model_instance.username = username
+
 
         if not fullname or not email or not cardname or not department or not company or not phone or not email:
             messages.error(request, 'Please enter all details!')
