@@ -25,6 +25,6 @@ jobs:
     - name: Run Tests
       run: |
         python manage.py test
-        sudo systemctl restart nginx
+      
        
     
