@@ -25,3 +25,9 @@ jobs:
     - name: Run Tests
       run: |
         python manage.py test
+        sudo uwsgi --reload /etc/uwsgi/sites/myproject.ini
+        sudo systemctl restart uwsgi
+        sudo systemctl restart nginx
+        sudo systemctl enable nginx
+        sudo systemctl enable uwsgi
+    
