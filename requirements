@@ -1,0 +1,12 @@
+django
+django-crispy-forms
+django-phonenumber-field
+qrcode
+django-qr-code
+phonenumbers
+pillow
+six
+django-utils-six
+vobject
+mixpanel
+boto3
