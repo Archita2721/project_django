@@ -9,4 +9,5 @@ six
 django-utils-six
 vobject
 mixpanel
+django-storages
 boto3
