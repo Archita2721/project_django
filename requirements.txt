@@ -11,3 +11,4 @@ vobject
 mixpanel
 django-storages
 boto3
+uWSGI
