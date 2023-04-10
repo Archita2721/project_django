@@ -34,7 +34,4 @@ jobs:
         sudo systemctl restart nginx
         sudo systemctl enable nginx
         sudo systemctl enable uwsgi
-    - name: Reboot system
-      run: |
-       sudo reboot
-   
+  
