@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-io0^v+_7ap0vgtx#j2y4vs2futs*^gol6icma*_74s-h+&mg6=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['quickshare.co.in','127.0.0.1']
+ALLOWED_HOSTS = ['quickshare.co.in','127.0.0.1','13.53.45.132']
 #ALLOWED_HOSTS = ['13.53.45.132']
 
 
