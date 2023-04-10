@@ -26,8 +26,7 @@ jobs:
       run: |
         python manage.py test
         uwsgi --socket /run/uwsgi/mysite.sock --chdir /home/ubuntu/project_django/ --module project_django.wsgi --chmod-socket=666 --daemonize /dev/null
-        sudo reboot
+        sudo systemctl stop nginx
         sudo systemctl start nginx
-        systemctl status nginx.service
         sudo systemctl enable nginx
         sudo systemctl enable uwsgi
