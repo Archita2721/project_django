@@ -33,6 +33,6 @@ jobs:
    
     - name: Restart nginx
       run: |
-        sudo systemctl start nginx
+        sudo systemctl restart nginx
         sudo systemctl enable nginx
         sudo systemctl enable uwsgi
