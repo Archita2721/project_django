@@ -32,6 +32,7 @@ jobs:
         script: |
           git clone https://github.com/Archita2721/project_django.git ~/project_django 
           cd ~/project_django 
+          git stash
           git pull origin master
 
  
