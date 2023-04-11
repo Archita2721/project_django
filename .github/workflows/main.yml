@@ -30,7 +30,9 @@ jobs:
     - name: Start uWSGI
       run: |
        uwsgi --socket /run/uwsgi/mysite.sock --chdir /home/ubuntu/project_django/ --module project_django.wsgi --chmod-socket=666 --daemonize /dev/null 
-   
+    - name: Reboot system
+      run: |
+        sudo reboot 
     - name: Restart nginx
       run: |
        sudo systemctl restart nginx
