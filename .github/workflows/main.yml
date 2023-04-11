@@ -27,7 +27,7 @@ jobs:
       with:
         host: 13.53.45.132 # Replace with your EC2 instance's public IP
         username: ubuntu # Replace with your SSH username
-        key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCjv1mZiVz+/GnltEItBSW6Q6IRscslGoC63vVWU3sDjd6txo/5yOHYAs1uV+5uy7xH+2k/oMg63ru+MRfKYJwyu/yTdh01/MTAtXHvlYxi6DALNtTQ3hbJlhj/d9Z5S4M6ZH90dGE6/12q0O3uEHmM5TFSgraKj45p/pOB1hH2FHcySZ9tsxLyI5DbDpKRq3t0hyYJdi2x2cPGT5acXgDpW6h6+KLjGJokVTZpQePl4iB7VrECT+iCJde++EgfXdoBw/XuwaGHee1yjcuhsj1h2Llk4ug0IpJYxrL1G3/O9P3KalGNENrEQy97R9EpXWwGXt55b4bext/V9YtwkcFH quickshare
+        key: ${{secrets.KEY}}
         port: 22
         script: |
           git clone https://github.com/Archita2721/project_django.git ~/project_django 
