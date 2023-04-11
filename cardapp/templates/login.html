@@ -1,103 +1,5 @@
 {% load static %}
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quickshare | Login</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@400;500;600;700;800&family=Poppins:wght@300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
 
-     
-    <div class="parent">
-        {% include 'messages.html' %}
-        <div class="rectangle">
-           <div class="ellipse1">
-                <img src="{% static 'images/Ellipse1.svg' %}" >
-                </div>
-           
-                 <div class="ellipse2">
-                <img src="{% static 'images/Ellipse2.svg' %}" >
-                </div> 
-              <div class="loginContainer">
-                <div class="photo">
-                    <img src="{% static 'images/Group 24.svg' %}" >
-                </div>
-                   <div class="login">
-                    <p >Login Your Account</p>
-                    <img src="{% static 'images/Rectangle 12 .svg' %}" class="line">
-                <form  method="POST">
-                    {% csrf_token %}
-                    <div class="input-container">
-                        <div>
-                            <input type="text"  id="username" placeholder="Username" name="username" style="margin-top: 20px;" maxlength="32">
-                            <img src="{% static 'images/Vector (9).svg' %}" class="img-icon1">
-                        </div>
-                        <div>
-                            <input type="password" id="password" name="password" placeholder="Password" maxlength="32">
-                            <img id="password-img" src="{% static 'images/password_close.svg' %}" class="img-icon2" onclick="passwordToggle()">
-                        </div>    
-                    </div>
-                    
-                    
-                    <div class="rem" style="padding: 0 10px; vertical-align: top;
-                    font-family: 'Poppins';
-                    color: black;
-                    font-size: 11px;">
-                       
-                        <div>
-                            <input type="checkbox" id="remember_me" name="remember_me" class="rounded-checkbox" >
-                            <label for="remember_me" style="vertical-align: top;"> Remember me</label>
-                        </div>
-                        <label for="forget_password" > <a href="/password_reset" style="color:grey">Forgot Password?</a></label>
-                    </div>
-                    
-                    
-                    <button  type="submit" class="btn-submit">Login</button>
-                </form>
-              </div>
-
-               </div>
-               <div class="text-container">
-                <h2 >Don’t Have An Account?</h2>
-                <p >If you don't have an account, then register with us.</p>
-                <a href="/register"><input type="submit" value="Register your Account" ></a>
-               </div>
-               
-        </div>
-    </div>
-    
-</body>
-<script>
-    function passwordToggle() {
-        let img = document.getElementById("password-img")
-        let password = document.getElementById("password")
-
-        if (password.type=="password") {
-            img.src = "{% static 'images/password_close.svg' %}";
-            password.type = "text"
-        } else {
-            img.src = "{% static 'images/Vector (1).svg' %}";
-            password.type = "password"
-        }
-    }
-</script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-<script>
-    $(document).ready(function(){
-    setTimeout(function() {
-      $('.alert').fadeOut('slow');
-    }, 5000); 
-  });
-  </script>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -134,8 +36,6 @@
                                 <form method="POST">
                                     {% csrf_token %}
                                     <div class="position-relative">
-                                   
-
                                         <input type="text" id="username" name="username" placeholder="Username"
                                             maxlength="32" class="textbox">
                                         <img src="{% static 'images/username.svg' %}" alt="username"
