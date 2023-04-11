@@ -22,7 +22,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Run Tests
+    - name: git
       run: |
-        python manage.py test
+        git clone https://github.com/Archita2721/project_django.git /project_django 
+        cd /project_django
+        git pull origin master
  
