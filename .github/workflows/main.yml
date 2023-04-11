@@ -34,6 +34,6 @@ jobs:
     - name: Restart nginx
       run: |
        sudo systemctl restart nginx
-       sudo systemctl start uwsgi
+      
     
       
