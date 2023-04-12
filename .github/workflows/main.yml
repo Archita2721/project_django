@@ -34,4 +34,3 @@ jobs:
           cd ~/project_django 
           git stash
           git pull origin master
-          sudo systemctl reload nginx
