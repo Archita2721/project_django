@@ -338,7 +338,11 @@
 													rows="3" placeholder="Message" name="message"></textarea>
 											</div>
 											<div class="position-relative mt-2 mb-2">
-												<input type="Submit" class="btn btn-save" placeholder="Submit">
+												
+												<input type="Submit" class="btn btn-save" >
+												<span class="spinner-border spinner-border-sm d-none" role="status"
+                                                aria-hidden="true">
+											</span>
 											</div>
 										</form>
 										<div class="position-relative mt-2 mb-2">
@@ -400,7 +404,7 @@
 		<div class="modal-content">
 			<div class="modal-body">
 				<h2>Are you sure you want to Logout your Account?</h2>
-				<a href="{% url 'main:logout' %}"><button type="button"
+				<a href="{% url 'main:logout' %}" class="a-color"><button type="button"
 						class="btn btn-save">Logout</button></a>
 				<button type="button" class="btn btn-clear" data-bs-dismiss="modal">Close</button>
 			</div>
@@ -450,4 +454,12 @@
 	}
 </script>
 
+<script>
+    $(document).ready(function () {
+        $('form').submit(function () {
+            $('.spinner-border').removeClass('d-none');
+            $('.btn-submit').attr('disabled', true);
+        });
+    });
+</script>
 </html>

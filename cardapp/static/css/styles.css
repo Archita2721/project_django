@@ -4,6 +4,7 @@
      box-sizing: border-box;
  }
 
+
  .decor {
      text-decoration: none;
      color: black;
@@ -847,4 +848,9 @@
     align-items: center;
     justify-content: center;
     padding: 30PX;
+}
+
+
+.a-color:hover{
+    color: white;
 }
