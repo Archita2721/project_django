@@ -12,3 +12,4 @@ mixpanel
 django-storages
 boto3
 uWSGI
+django-ses
