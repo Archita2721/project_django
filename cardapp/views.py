@@ -49,6 +49,7 @@ from django.views.generic import FormView
 from django.http import Http404, HttpResponse
 import os
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from io import BytesIO
 from mixpanel import Mixpanel
 import tempfile
@@ -83,6 +84,51 @@ def activate(request, uidb64, token):
     return redirect('/login')
 
 
+# def register(request):
+#     if request.method == "POST":
+#         username = request.POST.get('username')
+#         email = request.POST.get('email')
+#         password = request.POST.get('password1')
+#         confirm_password = request.POST.get('password2')
+
+#         # Validate form data
+#         if not username or not email or not password or not confirm_password:
+#             messages.error(request, 'All fields are required.')
+#             return render(request, 'register.html')
+#         elif password != confirm_password:
+#             messages.error(request, 'Passwords do not match.')
+#             return render(request, 'register.html')
+#         elif User.objects.filter(username=username).exists():
+#             messages.error(request, 'Username is already taken.')
+#             return render(request, 'register.html')
+#         elif User.objects.filter(email=email).exists():
+#             messages.error(request, 'Email address is already registered.')
+#             return render(request, 'register.html')
+#         else:
+#             # Create new user instance
+#             user = User.objects.create_user(
+#                 username=username,
+#                 email=email,
+#                 password=password
+#             )
+
+#             # Set user as inactive until email confirmation
+#             user.is_active = False
+
+#             user.save()
+#             mp.people_set(request.user.id, {
+#                 '$email': request.user.email,
+#                 '$created': '2013-04-01T13:20:00',
+#                 '$last_login': datetime.now()
+#             })
+#             mp.track(request.user.id, 'Signed Up')
+
+#             activateEmail(request, user, email)
+#             messages.success(
+#                 request, '\nYour account has been created. Please check your email to activate your account.')
+#             return redirect('main:login')
+#     return render(request, 'register.html')
+
 def register(request):
     if request.method == "POST":
         username = request.POST.get('username')
@@ -115,19 +161,19 @@ def register(request):
             user.is_active = False
 
             user.save()
-            mp.people_set(request.user.id, {
-                '$email': request.user.email,
-                '$created': '2013-04-01T13:20:00',
-                '$last_login': datetime.now()
-            })
-            mp.track(request.user.id, 'Signed Up')
+            if not isinstance(request.user, AnonymousUser):
+                mp.people_set(request.user.id, {
+                    '$email': request.user.email,
+                    '$created': '2013-04-01T13:20:00',
+                    '$last_login': datetime.now()
+                })
+                mp.track(request.user.id, 'Signed Up')
 
             activateEmail(request, user, email)
             messages.success(
                 request, '\nYour account has been created. Please check your email to activate your account.')
             return redirect('main:login')
     return render(request, 'register.html')
-
 
 def activateEmail(request, user, to_email):
     mail_subject = 'Activate your user account.'
