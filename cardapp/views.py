@@ -1,5 +1,6 @@
 import io
 from pathlib import Path
+import smtplib
 from django.core.files import File
 from django.core.files.storage import default_storage
 import qrcode
@@ -51,6 +52,9 @@ import os
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from io import BytesIO
+import traceback
+from smtplib import SMTPException, SMTPDataError
+from datetime import datetime
 from mixpanel import Mixpanel
 import tempfile
 mp = Mixpanel("36cbd6f0b92d0588b757298c93c7a733")
@@ -129,51 +133,112 @@ def activate(request, uidb64, token):
 #             return redirect('main:login')
 #     return render(request, 'register.html')
 
+# def register(request):
+#     if request.method == "POST":
+#         username = request.POST.get('username')
+#         email = request.POST.get('email')
+#         password = request.POST.get('password1')
+#         confirm_password = request.POST.get('password2')
+
+#         # Validate form data
+#         if not username or not email or not password or not confirm_password:
+#             messages.error(request, 'All fields are required.')
+#             return render(request, 'register.html')
+#         elif password != confirm_password:
+#             messages.error(request, 'Passwords do not match.')
+#             return render(request, 'register.html')
+#         elif User.objects.filter(username=username).exists():
+#             messages.error(request, 'Username is already taken.')
+#             return render(request, 'register.html')
+#         elif User.objects.filter(email=email).exists():
+#             messages.error(request, 'Email address is already registered.')
+#             return render(request, 'register.html')
+#         else:
+#             # Create new user instance
+#             user = User.objects.create_user(
+#                 username=username,
+#                 email=email,
+#                 password=password
+#             )
+
+#             # Set user as inactive until email confirmation
+#             user.is_active = False
+
+#             user.save()
+#             if not isinstance(request.user, AnonymousUser):
+#                 mp.people_set(request.user.id, {
+#                     '$email': request.user.email,
+#                     '$created': '2013-04-01T13:20:00',
+#                     '$last_login': datetime.now()
+#                 })
+#                 mp.track(request.user.id, 'Signed Up')
+
+#             activateEmail(request, user, email)
+#             messages.success(
+#                 request, '\nYour account has been created. Please check your email to activate your account.')
+#             return redirect('main:login')
+#     return render(request, 'register.html')
+
 def register(request):
+    error_message = None
     if request.method == "POST":
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password1')
         confirm_password = request.POST.get('password2')
 
-        # Validate form data
         if not username or not email or not password or not confirm_password:
             messages.error(request, 'All fields are required.')
-            return render(request, 'register.html')
+            return render(request, 'register.html', {'error_message': error_message})
         elif password != confirm_password:
             messages.error(request, 'Passwords do not match.')
-            return render(request, 'register.html')
+            return render(request, 'register.html', {'error_message': error_message})
         elif User.objects.filter(username=username).exists():
             messages.error(request, 'Username is already taken.')
-            return render(request, 'register.html')
+            return render(request, 'register.html', {'error_message': error_message})
         elif User.objects.filter(email=email).exists():
             messages.error(request, 'Email address is already registered.')
-            return render(request, 'register.html')
+            return render(request, 'register.html', {'error_message': error_message})
         else:
-            # Create new user instance
             user = User.objects.create_user(
                 username=username,
                 email=email,
                 password=password
             )
-
-            # Set user as inactive until email confirmation
             user.is_active = False
-
             user.save()
-            if not isinstance(request.user, AnonymousUser):
-                mp.people_set(request.user.id, {
-                    '$email': request.user.email,
-                    '$created': '2013-04-01T13:20:00',
-                    '$last_login': datetime.now()
-                })
-                mp.track(request.user.id, 'Signed Up')
 
-            activateEmail(request, user, email)
-            messages.success(
-                request, '\nYour account has been created. Please check your email to activate your account.')
-            return redirect('main:login')
-    return render(request, 'register.html')
+            try:
+                if not isinstance(request.user, AnonymousUser):
+                    mp.people_set(request.user.id, {
+                        '$email': request.user.email,
+                        '$created': '2013-04-01T13:20:00',
+                        '$last_login': datetime.now()
+                    })
+                    mp.track(request.user.id, 'Signed Up')
+
+                activateEmail(request, user, email)
+                messages.success(
+                    request, '\nYour account has been created. Please check your email to activate your account.')
+                return redirect('main:login')
+            except SMTPDataError as e:
+                if 'Daily user sending quota exceeded' in str(e):
+                    error_message = "Sorry, the daily sending quota has been exceeded. Please try again tomorrow."
+                    messages.error(request,error_message)
+                else:
+                    raise e
+            except SMTPException as e:
+                print("SMTPException:", e)
+                traceback.print_exc()
+                error_message = "Failed to send email: {}".format(e)
+                messages.error(request,error_message)
+            except Exception as e:
+                print("Exception:", e)
+                traceback.print_exc()
+                error_message = "Failed to send email: {}".format(e)
+                messages.error(request,error_message)
+
+    return render(request, 'register.html', {'error_message': error_message})
 
 def activateEmail(request, user, to_email):
     mail_subject = 'Activate your user account.'
@@ -721,6 +786,66 @@ def password_reset_confirm(request, uidb64, token):
         return redirect(reverse('main:password_reset'))
 
 
+# @never_cache
+# @login_required
+# def send(request, id):
+#     mydata = CardData.objects.get(id=id)
+#     if request.method == "POST":
+#         email = request.POST.get('email')
+#         message = request.POST.get('message')
+#         fullname = request.POST.get('name')
+
+#         vcard = vCard()
+#         vcard.add('fn')
+#         vcard.fn.value = mydata.fullname
+#         vcard.add('ph').value = mydata.phone
+#         vcard.add('email')
+#         vcard.email.value = mydata.email
+#         vcard.add('tel')
+#         vcard.tel.value = mydata.phone
+
+#         with mydata.upload.open('rb') as img:
+#             image_data = base64.b64encode(img.read()).decode()
+#         vcard.add('PHOTO;ENCODING=b').value = image_data
+
+#         vcard_string = vcard.serialize()
+
+#         html_content = render_to_string(
+#             'template_card.html',  {'data': mydata})
+#         email_content = '{}\n\n{}'.format(message, html_content)
+#         msg = EmailMultiAlternatives(
+#             'Card',
+#             email_content,
+#             'architashah27@gmail.com',
+#             [email],
+#             headers={'Content-Type': 'text/html'},
+#         )
+
+#         with mydata.upload.open('rb') as img:
+#             msg_img = MIMEImage(img.read())
+#             msg_img.add_header('Content-ID', '<{}>'.format(mydata.upload))
+#             msg.attach(msg_img)
+
+#         msg.content_subtype = "html"
+#         msg.attach(mydata.fullname+'.vcf', vcard_string, 'text/vcard')
+#         #msg.attach(mydata.upload.name, img.read(), 'image/png')
+#         image_data = base64.b64decode(image_data)
+#         msg.attach(mydata.upload.name, image_data, 'image/png')
+
+
+#         msg.send()
+#         mp.track(request.user.id, 'Sent Email', {
+#             'recipient': email,
+#             'subject': 'Card',
+#             'date': datetime.now()
+#         })
+#         messages.success(request, "Please Check your mailbox.")
+#         return redirect('main:form')
+#     else:
+#         messages.error(request, "Something went wrong")
+
+#     return render(request=request, template_name="homepage.html", context={'form': mydata})
+
 @never_cache
 @login_required
 def send(request, id):
@@ -763,24 +888,97 @@ def send(request, id):
 
         msg.content_subtype = "html"
         msg.attach(mydata.fullname+'.vcf', vcard_string, 'text/vcard')
-        #msg.attach(mydata.upload.name, img.read(), 'image/png')
         image_data = base64.b64decode(image_data)
         msg.attach(mydata.upload.name, image_data, 'image/png')
 
-
-        msg.send()
-        mp.track(request.user.id, 'Sent Email', {
-            'recipient': email,
-            'subject': 'Card',
-            'date': datetime.now()
-        })
-        messages.success(request, "Please Check your mailbox.")
-        return redirect('main:form')
-    else:
-        messages.error(request, "Something went wrong")
+        try:
+            msg.send()
+            mp.track(request.user.id, 'Sent Email', {
+                'recipient': email,
+                'subject': 'Card',
+                'date': datetime.now()
+            })
+            messages.success(request, "Please Check your mailbox.")
+            return redirect('main:form')
+        except SMTPDataError as e:
+            if 'Daily user sending quota exceeded' in str(e):
+                messages.error(request, "Sorry, the daily sending quota has been exceeded. Please try again tomorrow.")
+                return redirect("main:card", id=id)
+            else:
+                raise e
+        except SMTPException as e:
+            print("SMTPException:", e)
+            traceback.print_exc()
+            messages.error(request, "Failed to send email: {}".format(e))
+            return redirect("main:card", id=id)
+        except Exception as e:
+            print("Exception:", e)
+            traceback.print_exc()
+            messages.error(request, "Failed to send email: {}".format(e))
+            return redirect("main:card", id=id)
+    messages.error(request, "Something went wrong")
 
     return render(request=request, template_name="homepage.html", context={'form': mydata})
+# @never_cache
+# @login_required
+# def sendmail(request, id):
+#     mydata = CardData.objects.get(id=id)
+#     if request.method == "POST":
+#         email = request.POST.get('email')
+#         message = request.POST.get('message')
+#         fullname = request.POST.get('name')
 
+#         vcard = vCard()
+#         vcard.add('fn')
+#         vcard.fn.value = mydata.fullname
+#         vcard.add('ph').value = mydata.phone
+#         vcard.add('email')
+#         vcard.email.value = mydata.email
+#         vcard.add('tel')
+#         vcard.tel.value = mydata.phone
+
+#         with mydata.upload.open('rb') as img:
+#             image_data = base64.b64encode(img.read()).decode()
+#         vcard.add('PHOTO;ENCODING=b').value = image_data
+
+#         vcard_string = vcard.serialize()
+
+#         html_content = render_to_string(
+#             'template_card.html',  {'data': mydata})
+#         email_content = '{}\n\n{}'.format(message, html_content)
+#         msg = EmailMultiAlternatives(
+#             'Card',
+#             email_content,
+#             'architashah27@gmail.com',
+#             [email],
+#             headers={'Content-Type': 'text/html'},
+#         )
+   
+#         with mydata.upload.open('rb') as img:
+#             msg_img = MIMEImage(img.read())
+#             msg_img.add_header('Content-ID', '<{}>'.format(mydata.upload))
+#             msg.attach(msg_img)
+
+#         msg.content_subtype = "html"
+#         msg.attach(mydata.fullname+'.vcf', vcard_string, 'text/vcard')
+#         #msg.attach(mydata.upload.name, img.read(), 'image/png')
+#         image_data = base64.b64decode(image_data)
+#         msg.attach(mydata.upload.name, image_data, 'image/png')
+
+       
+#         msg.send()
+#         mp.track(request.user.id, 'Sent Email', {
+#             'recipient': email,
+#             'subject': 'Card',
+#             'date': datetime.now()
+#         })
+#         messages.success(request, "Please Check your mailbox.")
+#         return redirect('main:form')
+      
+#     else:
+#         messages.error(request, "Something went wrong")
+
+#     return render(request=request, template_name="homepage.html", context={'form': mydata})
 
 @never_cache
 @login_required
@@ -824,25 +1022,40 @@ def sendmail(request, id):
 
         msg.content_subtype = "html"
         msg.attach(mydata.fullname+'.vcf', vcard_string, 'text/vcard')
-        #msg.attach(mydata.upload.name, img.read(), 'image/png')
         image_data = base64.b64decode(image_data)
         msg.attach(mydata.upload.name, image_data, 'image/png')
 
-
-        msg.send()
-        mp.track(request.user.id, 'Sent Email', {
-            'recipient': email,
-            'subject': 'Card',
-            'date': datetime.now()
-        })
-        messages.success(request, "Please Check your mailbox.")
-        return redirect('main:form')
-    else:
+        try:
+            msg.send()
+            mp.track(request.user.id, 'Sent Email', {
+                'recipient': email,
+                'subject': 'Card',
+                'date': datetime.now()
+            })
+            messages.success(request, "Please Check your mailbox.")
+            return redirect('main:form')
+        except SMTPDataError as e:
+            if 'Daily user sending quota exceeded' in str(e):
+                messages.error(request, "Sorry, the daily sending quota has been exceeded. Please try again tomorrow.")
+                return redirect("main:form")
+            else:
+                raise e
+        except SMTPException as e:
+            print("SMTPException:", e)
+            traceback.print_exc()
+            messages.error(request, "Failed to send email: {}".format(e))
+            return redirect("main:form")
+        except Exception as e:
+            print("Exception:", e)
+            traceback.print_exc()
+            messages.error(request, "Failed to send email: {}".format(e))
+            return redirect("main:form")
         messages.error(request, "Something went wrong")
 
     return render(request=request, template_name="homepage.html", context={'form': mydata})
 
 
+    
 def sendmailqr(request, id):
 
     mydataa = CardData.objects.filter(email=request.user.email)
