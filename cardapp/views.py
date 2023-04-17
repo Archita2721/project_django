@@ -745,7 +745,7 @@ def password_reset_request(request):
 
                         try:
                             send_mail(
-                                subject, email, 'architashah27@gmail.com', [user.email], fail_silently=False)
+                                subject, email, 'quickshare.eliteware@gmail.com', [user.email], fail_silently=False)
                         except BadHeaderError:
                             return HttpResponse('Invalid header found.')
 
@@ -876,7 +876,7 @@ def send(request, id):
         msg = EmailMultiAlternatives(
             'Card',
             email_content,
-            'architashah27@gmail.com',
+            'quickshare.eliteware@gmail.com',
             [email],
             headers={'Content-Type': 'text/html'},
         )
@@ -1010,7 +1010,7 @@ def sendmail(request, id):
         msg = EmailMultiAlternatives(
             'Card',
             email_content,
-            'architashah27@gmail.com',
+            'quickshare.eliteware@gmail.com',
             [email],
             headers={'Content-Type': 'text/html'},
         )
@@ -1085,7 +1085,7 @@ def sendmailqr(request, id):
         msg = EmailMultiAlternatives(
             'Card',
             html_content,
-            'architashah27@gmail.com',
+            'quickshare.eliteware@gmail.com',
             [email],
             headers={'Content-Type': 'text/html'},
         )
