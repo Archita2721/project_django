@@ -65,13 +65,25 @@ ROOT_URLCONF = 'project_django.urls'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_FROM = 'architashah27@gmail.com'
-EMAIL_HOST_USER = 'architashah27@gmail.com'
-EMAIL_HOST_PASSWORD = 'gpehisrpoyuuhqty'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_ACCESS_KEY_ID= 'AKIA5NZ245NVP7VDCD6F'
+AWS_SECRET_ACCESS_KEY= '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'
+AWS_STORAGE_BUCKET_NAME= 'quickshare-bucket'
+AWS_QUERYSTRING_AUTH= False
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_FROM = 'architashah27@gmail.com'
+# EMAIL_HOST_USER = 'architashah27@gmail.com'
+# EMAIL_HOST_PASSWORD = 'gpehisrpoyuuhqty'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+
+
+EMAIL_BACKEND = 'django_ses.SESBackend'
+
+AWS_SES_REGION_NAME = 'eu-north-1'
+AWS_SES_REGION_ENDPOINT ='email.eu-north-1.amazonaws.com'
 
 PASSWORD_RESET_TIMEOUT = 14400
 
@@ -169,8 +181,3 @@ STATIC_ROOT = '/var/www/project_django/assets/'
 
 #STORAGES = {"default": "storages.backends.s3boto3.S3Boto3Storage"}
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_ACCESS_KEY_ID= 'AKIA5NZ245NVP7VDCD6F'
-AWS_SECRET_ACCESS_KEY= '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'
-AWS_STORAGE_BUCKET_NAME= 'quickshare-bucket'
-AWS_QUERYSTRING_AUTH= False
