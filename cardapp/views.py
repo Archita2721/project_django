@@ -218,8 +218,8 @@ def register(request):
                     mp.track(request.user.id, 'Signed Up')
 
                 activateEmail(request, user, email)
-                messages.success(
-                    request, '\nYour account has been created. Please check your email to activate your account.')
+                # messages.success(
+                #     request, '\nYour account has been created. Please check your email to activate your account.')
                 return redirect('main:login')
             except SMTPDataError as e:
                 if 'Daily user sending quota exceeded' in str(e):
@@ -256,6 +256,7 @@ def activateEmail(request, user, to_email):
     else:
         messages.error(
             request, f'Problem sending confirmation email to {to_email}, check if you typed it correctly.')
+
 
 
 def register_request(request):
