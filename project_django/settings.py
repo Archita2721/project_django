@@ -74,18 +74,10 @@ ROOT_URLCONF = 'project_django.urls'
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_FROM = 'quickshare.eliteware@gmail.com'
-EMAIL_HOST_USER = 'quickshare.eliteware@gmail.com'
-EMAIL_HOST_PASSWORD = 'aviarxgdacsuuske'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
-# EMAIL_BACKEND = 'django_ses.SESBackend'
-# AWS_SES_REGION_NAME = 'eu-north-1'
-# AWS_SES_REGION_ENDPOINT = 'email.eu-north-1.amazonaws.com'
-# DEFAULT_FROM_EMAIL = 'quickshare.eliteware@gmail.com'
+EMAIL_BACKEND = 'django_ses.SESBackend'
+AWS_SES_REGION_NAME = 'eu-north-1'
+AWS_SES_REGION_ENDPOINT = 'email.eu-north-1.amazonaws.com'
+DEFAULT_FROM_EMAIL = 'quickshare.eliteware@gmail.com'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_ACCESS_KEY_ID= 'AKIA5NZ245NVP7VDCD6F'
