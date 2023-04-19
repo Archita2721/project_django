@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "phonenumber_field",
     'qr_code',
     'storages',
+    'django_ses',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -63,13 +64,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'project_django.urls'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_ACCESS_KEY_ID= 'AKIA5NZ245NVP7VDCD6F'
-AWS_SECRET_ACCESS_KEY= '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'
-AWS_STORAGE_BUCKET_NAME= 'quickshare-bucket'
-AWS_QUERYSTRING_AUTH= False
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_HOST = 'smtp.gmail.com'
@@ -79,11 +74,16 @@ AWS_QUERYSTRING_AUTH= False
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
 
-
 EMAIL_BACKEND = 'django_ses.SESBackend'
-
 AWS_SES_REGION_NAME = 'eu-north-1'
-AWS_SES_REGION_ENDPOINT ='email.eu-north-1.amazonaws.com'
+AWS_SES_REGION_ENDPOINT = 'email.eu-north-1.amazonaws.com'
+DEFAULT_FROM_EMAIL = 'quickshare.eliteware@gmail.com'
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_ACCESS_KEY_ID= 'AKIA5NZ245NVP7VDCD6F'
+AWS_SECRET_ACCESS_KEY= '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'
+AWS_STORAGE_BUCKET_NAME= 'quickshare-bucket'
+AWS_QUERYSTRING_AUTH= False
 
 PASSWORD_RESET_TIMEOUT = 14400
 
