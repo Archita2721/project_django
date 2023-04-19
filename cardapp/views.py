@@ -36,6 +36,8 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth import get_user_model
 from .forms import sendForm
 from .models import CardData
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from email.mime.image import MIMEImage
 from vobject import vCard
 import base64
@@ -49,6 +51,7 @@ from smtplib import SMTPDataError
 from django.views.generic import FormView
 from django.http import Http404, HttpResponse
 import os
+import secrets
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from io import BytesIO
@@ -571,6 +574,26 @@ def addcard(request):
 
 
 
+# @login_required
+# @never_cache
+# def card(request, id):
+#     mydata = CardData.objects.get(id=id)
+#     if request.method == 'GET':
+#         mp.track(request.user.id, 'Viewed Get all card page')
+#         url = request.build_absolute_uri(
+#             reverse('main:qrcard', args=[mydata.id]))
+#         qr = QRCode(version=1, error_correction=constants.ERROR_CORRECT_L)
+#         qr.add_data(url)
+#         qr.make()
+#         img = qr.make_image()
+#         img_io = io.BytesIO()
+#         img.save(img_io, 'PNG')
+#         img_io.seek(0)
+#         img_base64 = base64.b64encode(img_io.getvalue()).decode()
+#         return render(request=request, template_name='card.html', context={'x': mydata, 'qr_code': img_base64})
+#     return render(request=request, template_name='card.html', context={'x': mydata})
+
+@method_decorator(csrf_exempt, name='dispatch')
 @login_required
 @never_cache
 def card(request, id):
@@ -587,9 +610,65 @@ def card(request, id):
         img.save(img_io, 'PNG')
         img_io.seek(0)
         img_base64 = base64.b64encode(img_io.getvalue()).decode()
-        return render(request=request, template_name='card.html', context={'x': mydata, 'qr_code': img_base64})
+
+        # Generate vcf card
+        vcard = vCard()
+        vcard.add('fn')
+        vcard.fn.value = mydata.fullname
+        vcard.add('ph').value = mydata.phone
+        vcard.add('email')
+        vcard.email.value = mydata.email
+        vcard.add('tel')
+        vcard.tel.value = mydata.phone
+
+        with default_storage.open(mydata.upload.name, 'rb') as img:
+            image_data = base64.b64encode(img.read()).decode() 
+
+        vcard.add('PHOTO;ENCODING=b').value = image_data
+
+        # Generate random string for download link
+        random_string = secrets.token_hex(8)
+
+        # Save the expected random string value in the session
+        request.session['download_vcf_random_string'] = random_string
+
+        # Generate link to download vcf card
+        download_link = request.build_absolute_uri(reverse_lazy('main:download_vcf', kwargs={'id': mydata.id, 'random_string': random_string}))
+
+        # Pass context to template
+        context = {'x': mydata, 'qr_code': img_base64, 'download_link': download_link}
+        return render(request=request, template_name='card.html', context=context)
+
     return render(request=request, template_name='card.html', context={'x': mydata})
 
+
+def download_vcf(request, id, random_string):
+    mydata = CardData.objects.get(id=id)
+
+    # Check if the random string in the URL matches the expected value
+    expected_string = request.session.get('download_vcf_random_string')
+    if random_string != expected_string:
+        return HttpResponse('Invalid download link. Please try again with a valid link.')
+
+    # Generate vcf card
+    vcard = vCard()
+    vcard.add('fn')
+    vcard.fn.value = mydata.fullname
+    vcard.add('ph').value = mydata.phone
+    vcard.add('email')
+    vcard.email.value = mydata.email
+    vcard.add('tel')
+    vcard.tel.value = mydata.phone
+
+    with default_storage.open(mydata.upload.name, 'rb') as img:
+        image_data = base64.b64encode(img.read()).decode() 
+
+    vcard.add('PHOTO;ENCODING=b').value = image_data
+
+    # Return vcf card as an attachment
+    response = HttpResponse(vcard.serialize(), content_type='text/vcard')
+    response['Content-Disposition'] = f'attachment; filename="{mydata.fullname}.vcf"'
+    return response
 
 def qrcard(request, id):
     if request.method == 'GET':

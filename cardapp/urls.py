@@ -19,8 +19,8 @@ urlpatterns = [
     path("login",views.login_request,name="login"),
     path("logout", views.logout_request, name= "logout"),
    # path("password_reset", views.password_reset_request, name="password_reset"),  
-    #path('activate/<uidb64>/<token>', views.activate, name='activate'),
-    path('activate/<str:uidb64>/<str:token>/', views.activate, name='activate'),
+    path('activate/<uidb64>/<token>', views.activate, name='activate'),
+    #path('activate/<str:uidb64>/<str:token>/', views.activate, name='activate'),
     path("card/<int:id>",views.card,name='card'),
     path("qrcard/<int:id>",views.qrcard,name='qrcard'),
     path("qr_card/<int:id>",views.qr_card,name='qr_card'),
@@ -38,7 +38,7 @@ urlpatterns = [
     path('password_reset/complete/', auth_views.PasswordResetCompleteView.as_view(template_name='password/password_reset_complete.html'), name='password_reset_complete'),
     path('change_password/', views.change_password_view, name='change_password'),
     path('resend_activation/', views.resend_activation, name='resend_activation'),
-    
+    path('download-vcf/<int:id>/<str:random_string>/', views.download_vcf, name='download_vcf'),
 
    ]
 
