@@ -34,7 +34,8 @@
 
  .sidebar {
      width: 100%;
-     max-width: 300px;
+     /* max-width: 300px; */
+     max-width: 250px;
      height: 100vh;
      overflow-x: hidden;
      overflow-y: auto;
@@ -71,7 +72,8 @@
  }
 
  #chkTogleMenu:checked~.sidebar {
-     width: 300px;
+     /* width: 300px; */
+     width: 250px;
  }
 
  #chkTogleMenu:checked~.content {
@@ -652,11 +654,13 @@
      }
 
      .sidebar {
-         width: 300px;
+         /* width: 300px; */
+         width: 250px;
      }
 
      .content {
-         max-width: calc(100% - 300px);
+         /* max-width: calc(100% - 300px); */
+         max-width: calc(100% - 250px);
      }
 
      .menu-icon {
