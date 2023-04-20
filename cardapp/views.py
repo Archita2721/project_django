@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import SetPasswordForm
 from django.urls import reverse_lazy
 from django.views.decorators.cache import never_cache
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import login
 from django.contrib import messages
@@ -40,6 +40,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from email.mime.image import MIMEImage
 from vobject import vCard
+from botocore.exceptions import ClientError
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
 import base64
 from django.contrib.auth import views as auth_views
 from qrcode import QRCode, constants
@@ -926,6 +930,81 @@ def password_reset_confirm(request, uidb64, token):
 
 #     return render(request=request, template_name="homepage.html", context={'form': mydata})
 
+# @never_cache
+# @login_required
+# def send(request, id):
+#     mydata = CardData.objects.get(id=id)
+#     if request.method == "POST":
+#         email = request.POST.get('email')
+#         message = request.POST.get('message')
+#         fullname = request.POST.get('name')
+
+#         vcard = vCard()
+#         vcard.add('fn')
+#         vcard.fn.value = mydata.fullname
+#         vcard.add('ph').value = mydata.phone
+#         vcard.add('email')
+#         vcard.email.value = mydata.email
+#         vcard.add('tel')
+#         vcard.tel.value = mydata.phone
+
+#         with mydata.upload.open('rb') as img:
+#             image_data = base64.b64encode(img.read()).decode()
+#         vcard.add('PHOTO;ENCODING=b').value = image_data
+
+#         vcard_string = vcard.serialize()
+
+#         html_content = render_to_string(
+#             'template_card.html',  {'data': mydata})
+#         email_content = '{}\n\n{}'.format(message, html_content)
+#         msg = EmailMultiAlternatives(
+#             'Card',
+#             email_content,
+#             'quickshare.eliteware@gmail.com',
+#             [email],
+#             headers={'Content-Type': 'text/html'},
+#         )
+
+#         with mydata.upload.open('rb') as img:
+#             msg_img = MIMEImage(img.read())
+#             msg_img.add_header('Content-ID', '<{}>'.format(mydata.upload))
+#             msg.attach(msg_img)
+
+#         msg.content_subtype = "html"
+#         msg.attach(mydata.fullname+'.vcf', vcard_string, 'text/vcard')
+#         image_data = base64.b64decode(image_data)
+#         msg.attach(mydata.upload.name, image_data, 'image/png')
+
+#         try:
+#             msg.send()
+#             mp.track(request.user.id, 'Sent Email', {
+#                 'recipient': email,
+#                 'subject': 'Card',
+#                 'date': datetime.now()
+#             })
+#             messages.success(request, "Please Check your mailbox.")
+#             return redirect('main:form')
+#         except SMTPDataError as e:
+#             if 'Daily user sending quota exceeded' in str(e):
+#                 messages.error(request, "Sorry, the daily sending quota has been exceeded. Please try again tomorrow.")
+#                 return redirect("main:card", id=id)
+#             else:
+#                 raise e
+#         except SMTPException as e:
+#             print("SMTPException:", e)
+#             traceback.print_exc()
+#             messages.error(request, "Failed to send email: {}".format(e))
+#             return redirect("main:card", id=id)
+#         except Exception as e:
+#             print("Exception:", e)
+#             traceback.print_exc()
+#             messages.error(request, "Failed to send email: {}".format(e))
+#             return redirect("main:card", id=id)
+#     messages.error(request, "Something went wrong")
+
+#     return render(request=request, template_name="homepage.html", context={'form': mydata})
+
+
 @never_cache
 @login_required
 def send(request, id):
@@ -957,8 +1036,7 @@ def send(request, id):
             'Card',
             email_content,
             'quickshare.eliteware@gmail.com',
-            [email],
-            headers={'Content-Type': 'text/html'},
+            [email]
         )
 
         with mydata.upload.open('rb') as img:
@@ -999,6 +1077,9 @@ def send(request, id):
     messages.error(request, "Something went wrong")
 
     return render(request=request, template_name="homepage.html", context={'form': mydata})
+
+
+
 # @never_cache
 # @login_required
 # def sendmail(request, id):
@@ -1060,6 +1141,80 @@ def send(request, id):
 
 #     return render(request=request, template_name="homepage.html", context={'form': mydata})
 
+# @never_cache
+# @login_required
+# def sendmail(request, id):
+#     mydata = CardData.objects.get(id=id)
+#     if request.method == "POST":
+#         email = request.POST.get('email')
+#         message = request.POST.get('message')
+#         fullname = request.POST.get('name')
+
+#         vcard = vCard()
+#         vcard.add('fn')
+#         vcard.fn.value = mydata.fullname
+#         vcard.add('ph').value = mydata.phone
+#         vcard.add('email')
+#         vcard.email.value = mydata.email
+#         vcard.add('tel')
+#         vcard.tel.value = mydata.phone
+
+#         with mydata.upload.open('rb') as img:
+#             image_data = base64.b64encode(img.read()).decode()
+#         vcard.add('PHOTO;ENCODING=b').value = image_data
+
+#         vcard_string = vcard.serialize()
+
+#         html_content = render_to_string(
+#             'template_card.html',  {'data': mydata})
+#         email_content = '{}\n\n{}'.format(message, html_content)
+#         msg = EmailMultiAlternatives(
+#             'Card',
+#             email_content,
+#             'quickshare.eliteware@gmail.com',
+#             [email],
+#             headers={'Content-Type': 'text/html'},
+#         )
+
+#         with mydata.upload.open('rb') as img:
+#             msg_img = MIMEImage(img.read())
+#             msg_img.add_header('Content-ID', '<{}>'.format(mydata.upload))
+#             msg.attach(msg_img)
+
+#         msg.content_subtype = "html"
+#         msg.attach(mydata.fullname+'.vcf', vcard_string, 'text/vcard')
+#         image_data = base64.b64decode(image_data)
+#         msg.attach(mydata.upload.name, image_data, 'image/png')
+
+#         try:
+#             msg.send()
+#             mp.track(request.user.id, 'Sent Email', {
+#                 'recipient': email,
+#                 'subject': 'Card',
+#                 'date': datetime.now()
+#             })
+#             messages.success(request, "Please Check your mailbox.")
+#             return redirect('main:form')
+#         except SMTPDataError as e:
+#             if 'Daily user sending quota exceeded' in str(e):
+#                 messages.error(request, "Sorry, the daily sending quota has been exceeded. Please try again tomorrow.")
+#                 return redirect("main:form")
+#             else:
+#                 raise e
+#         except SMTPException as e:
+#             print("SMTPException:", e)
+#             traceback.print_exc()
+#             messages.error(request, "Failed to send email: {}".format(e))
+#             return redirect("main:form")
+#         except Exception as e:
+#             print("Exception:", e)
+#             traceback.print_exc()
+#             messages.error(request, "Failed to send email: {}".format(e))
+#             return redirect("main:form")
+#         messages.error(request, "Something went wrong")
+
+#     return render(request=request, template_name="homepage.html", context={'form': mydata})
+
 @never_cache
 @login_required
 def sendmail(request, id):
@@ -1091,8 +1246,7 @@ def sendmail(request, id):
             'Card',
             email_content,
             'quickshare.eliteware@gmail.com',
-            [email],
-            headers={'Content-Type': 'text/html'},
+            [email]
         )
 
         with mydata.upload.open('rb') as img:
@@ -1117,24 +1271,22 @@ def sendmail(request, id):
         except SMTPDataError as e:
             if 'Daily user sending quota exceeded' in str(e):
                 messages.error(request, "Sorry, the daily sending quota has been exceeded. Please try again tomorrow.")
-                return redirect("main:form")
+                return redirect("main:card", id=id)
             else:
                 raise e
         except SMTPException as e:
             print("SMTPException:", e)
             traceback.print_exc()
             messages.error(request, "Failed to send email: {}".format(e))
-            return redirect("main:form")
+            return redirect("main:card", id=id)
         except Exception as e:
             print("Exception:", e)
             traceback.print_exc()
             messages.error(request, "Failed to send email: {}".format(e))
-            return redirect("main:form")
-        messages.error(request, "Something went wrong")
+            return redirect("main:card", id=id)
+    messages.error(request, "Something went wrong")
 
     return render(request=request, template_name="homepage.html", context={'form': mydata})
-
-
     
 def sendmailqr(request, id):
 
